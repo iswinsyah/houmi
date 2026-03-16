@@ -121,6 +121,10 @@ let editingVillaId = null;
 let editingArticleId = null;
 let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 
+// --- KONFIGURASI AI ---
+// PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwKhbf0doH9ue1Gya9ubLU6ZqrLYM4HkwtTmlGy-exkaWJe3wLTAC3HUR5h2w7fg1Q/exec";
+
 const formatRupiah = (angka) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 };
@@ -139,6 +143,72 @@ function getAmenityIcon(amenity) {
 function setCategory(cat) {
     activeCategory = cat;
     renderApp();
+}
+
+// --- AI GENERATOR FUNCTION ---
+async function generateBuyerPersona() {
+    const btn = document.getElementById('btn-generate');
+    const resultArea = document.getElementById('persona-result');
+    const loadingArea = document.getElementById('persona-loading');
+    
+    if (bookingsData.length === 0) {
+        alert("Belum ada data booking di CRM untuk dianalisa.");
+        return;
+    }
+
+    if (GAS_API_URL === "PASTE_URL_WEB_APP_GOOGLE_SCRIPT_DISINI" || GAS_API_URL === "") {
+        alert("URL Google Apps Script belum dipasang di script.js!");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    resultArea.classList.add('hidden');
+    loadingArea.classList.remove('hidden');
+
+    try {
+        // 1. Siapkan Data
+        const dataSummary = bookingsData.map((b, index) => 
+            `${index+1}. Nama: ${b.customerName}, Asal: ${b.city}, Tujuan: ${b.purpose}, Jumlah: ${b.pax} Org, Sumber: ${b.source}, Villa: ${b.villaName}, Durasi: ${b.nights} malam`
+        ).join('\n');
+
+        const prompt = `
+        Bertindaklah sebagai Konsultan Bisnis Villa profesional. Analisa data transaksi berikut ini untuk membuat "Buyer Persona" dan "Strategi Marketing".
+        
+        Data Transaksi CRM:
+        ${dataSummary}
+        
+        Tolong berikan output dalam format HTML (tanpa tag <html> atau <body>) menggunakan class Tailwind CSS.
+        Struktur:
+        1. Kotak Ringkasan (Background hijau muda): Total transaksi, Rata-rata malam, Villa Terlaris.
+        2. 🎯 Profil Buyer Persona (Detail): Analisa Demografi, Psikografi, dan Perilaku.
+        3. 💡 Rekomendasi Strategi: Saran konten medsos dan ide promo.
+        `;
+
+        // 2. Kirim ke Google Apps Script (GAS)
+        const response = await fetch(GAS_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }, // GAS butuh header ini agar dianggap text/plain kadang-kadang, tapi kita coba standard json
+            body: JSON.stringify({ prompt: prompt }) 
+        });
+
+        const data = await response.json();
+        
+        // 3. Tampilkan Hasil
+        let aiText = data.candidates[0].content.parts[0].text;
+        aiText = aiText.replace(/```html/g, '').replace(/```/g, ''); // Bersihkan markdown
+
+        resultArea.innerHTML = aiText;
+        resultArea.classList.remove('hidden');
+
+    } catch (error) {
+        alert("Gagal menghubungi AI: " + error.message);
+        console.error(error);
+    } finally {
+        loadingArea.classList.add('hidden');
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
 }
 
 // --- CALENDAR FUNCTIONS (NEW) ---
@@ -416,6 +486,10 @@ function submitBooking(e, villaName, villaId) {
         villaId: villaId,
         villaName: villaName,
         customerName: form.name.value,
+        city: form.city.value,     // Data Baru
+        pax: form.pax.value,       // Data Baru
+        purpose: form.purpose.value, // Data Baru
+        source: form.source.value, // Data Baru
         phone: form.phone.value,
         date: form.date.value,
         nights: form.nights.value,
@@ -430,7 +504,7 @@ function submitBooking(e, villaName, villaId) {
     document.getElementById('booking-modal').remove();
     
     // Simulasi kirim ke WA juga biar real
-    const waMessage = `Halo Admin Houmi, saya ingin pesan ${villaName} untuk tanggal ${form.date.value} (${form.nights.value} malam). A.n ${form.name.value}`;
+    const waMessage = `Halo Admin Houmi, saya ingin pesan ${villaName}.\n\nNama: ${form.name.value}\nAsal Kota: ${form.city.value}\nJumlah Tamu: ${form.pax.value} orang\nTujuan: ${form.purpose.value}\nTanggal: ${form.date.value} (${form.nights.value} malam).`;
     const waLink = `https://wa.me/6281234567890?text=${encodeURIComponent(waMessage)}`; // Ganti nomor WA Bos disini
     
     if(confirm('Data tersimpan di CRM! Lanjut kirim pesan WhatsApp ke Admin?')) {
@@ -446,17 +520,36 @@ function showBookingModal(villaName, villaId) {
                     <h3 class="text-xl font-bold text-gray-800">Form Pemesanan</h3>
                     <button onclick="document.getElementById('booking-modal').remove()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
-                <p class="text-sm text-gray-500 mb-4">Booking <b>${villaName}</b> sekarang.</p>
+                <p class="text-xs text-gray-500 mb-4">Lengkapi data untuk booking <b>${villaName}</b>.</p>
                 
                 <form onsubmit="submitBooking(event, '${villaName}', ${villaId})">
-                    <div class="space-y-3 mb-6">
+                    <div class="space-y-2 mb-4 h-64 overflow-y-auto pr-2 custom-scrollbar">
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-1">Nama Lengkap</label>
                             <input type="text" name="name" class="w-full border p-2 rounded-lg text-sm focus:ring-1 focus:ring-red-500 outline-none" placeholder="Nama Pemesan" required>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-1">WhatsApp</label>
-                            <input type="tel" name="phone" class="w-full border p-2 rounded-lg text-sm focus:ring-1 focus:ring-red-500 outline-none" placeholder="08xxxx" required>
+                            <input type="tel" name="phone" class="w-full border p-2 rounded-lg text-sm focus:ring-1 focus:ring-red-500 outline-none" placeholder="08xxxxx" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Kota Asal</label>
+                                <input type="text" name="city" class="w-full border p-2 rounded-lg text-sm outline-none" placeholder="Cth: Surabaya" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Jml Peserta</label>
+                                <input type="number" name="pax" class="w-full border p-2 rounded-lg text-sm outline-none" placeholder="Org" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Tujuan Menginap</label>
+                            <select name="purpose" class="w-full border p-2 rounded-lg text-sm outline-none bg-white">
+                                <option value="Liburan Keluarga">Liburan Keluarga</option>
+                                <option value="Honeymoon">Honeymoon / Couple</option>
+                                <option value="Gathering Kantor">Gathering Kantor</option>
+                                <option value="Acara Sekolah/Kampus">Acara Sekolah/Kampus</option>
+                            </select>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                              <div>
@@ -467,6 +560,15 @@ function showBookingModal(villaName, villaId) {
                                 <label class="block text-xs font-bold text-gray-700 mb-1">Malam</label>
                                 <input type="number" name="nights" min="1" value="1" class="w-full border p-2 rounded-lg text-sm" required>
                             </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Tahu Houmi Dari?</label>
+                            <select name="source" class="w-full border p-2 rounded-lg text-sm outline-none bg-white">
+                                <option value="Instagram">Instagram</option>
+                                <option value="TikTok">TikTok</option>
+                                <option value="Google">Google Search</option>
+                                <option value="Rekomendasi Teman">Rekomendasi Teman</option>
+                            </select>
                         </div>
                     </div>
                     <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-red-200">
@@ -805,6 +907,13 @@ function getAdminDashboardHTML() {
                     </div>
                     <i data-lucide="kanban-square" class="w-8 h-8 opacity-50 group-hover:opacity-100 transition"></i>
                 </button>
+                <button onclick="navigateTo('admin-generator')" class="bg-pink-600 text-white p-4 rounded-xl shadow-sm hover:bg-pink-700 text-left flex items-center justify-between group col-span-2 sm:col-span-1 border border-pink-500">
+                    <div>
+                        <div class="font-bold text-lg">AI Persona</div>
+                        <div class="text-xs text-pink-200">Analisa Pembeli</div>
+                    </div>
+                    <i data-lucide="brain-circuit" class="w-8 h-8 opacity-50 group-hover:opacity-100 transition"></i>
+                </button>
                 <button onclick="navigateTo('admin-media')" class="bg-blue-600 text-white p-4 rounded-xl shadow-sm hover:bg-blue-700 text-left flex items-center justify-between group">
                     <div>
                         <div class="font-bold text-lg">Media Library</div>
@@ -904,6 +1013,43 @@ function getAdminArticlesHTML() {
                 `).join('')}
                 ${articlesData.length === 0 ? '<p class="text-center text-gray-400 py-10">Belum ada artikel.</p>' : ''}
             </div>
+        </main>
+    </div>
+    `;
+}
+
+function getAdminGeneratorHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="brain-circuit" class="w-6 h-6 text-pink-600"></i> AI Buyer Persona
+            </h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-6">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center">
+                <div class="bg-pink-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-pink-600">
+                    <i data-lucide="users" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Analisa Siapa Pembeli Anda</h2>
+                <p class="text-gray-500 max-w-lg mx-auto mb-8">
+                    AI akan memindai data dari <strong>${bookingsData.length} leads</strong> di CRM Anda untuk menemukan pola perilaku dan karakteristik target market Anda.
+                </p>
+                
+                <button id="btn-generate" onclick="generateBuyerPersona()" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-pink-700 shadow-lg shadow-pink-200 transition-all flex items-center gap-2 mx-auto">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i> Analisa Sekarang
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="persona-loading" class="hidden mt-8 text-center py-10">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-pink-600 mx-auto mb-4"></div>
+                <p class="text-gray-500 animate-pulse">Sedang membaca data CRM...</p>
+            </div>
+
+            <!-- Result Area -->
+            <div id="persona-result" class="hidden mt-8 bg-white p-8 rounded-2xl shadow-lg border border-gray-100 slide-in text-left"></div>
         </main>
     </div>
     `;
@@ -1138,6 +1284,8 @@ function renderApp() {
         appDiv.innerHTML = getAdminDashboardHTML();
     } else if (currentPage === 'admin-crm') {
         appDiv.innerHTML = getAdminCRMHTML();
+    } else if (currentPage === 'admin-generator') {
+        appDiv.innerHTML = getAdminGeneratorHTML();
     } else if (currentPage === 'admin-articles') {
         appDiv.innerHTML = getAdminArticlesHTML();
     } else if (currentPage === 'admin-article-edit') {
