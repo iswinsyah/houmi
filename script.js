@@ -641,12 +641,12 @@ function renderVillaCards() {
                 </div>
                 <div class="mt-auto">
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded">DISKON ${discount}%</span> <!-- Keep red for discount -->
-                        <span class="text-gray-400 text-[10px] sm:text-xs line-through decoration-red-400">${formatRupiah(villa.oldPrice)}</span> <!-- Keep red for old price -->
+                        <span class="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded">DISKON ${discount}%</span>
+                        <span class="text-gray-400 text-xs line-through decoration-dark">${formatRupiah(villa.oldPrice)}</span>
                     </div>
                     <div class="flex justify-between items-end">
                         <div>
-                            <span class="text-lg sm:text-xl font-bold text-red-600">${formatRupiah(villa.price)}</span> <!-- Keep red for prominent price -->
+                            <span class="text-xl font-bold text-primary">${formatRupiah(villa.price)}</span>
                             <span class="text-gray-500 text-[10px] sm:text-xs font-medium"> / malam</span>
                         </div>
                     </div>
@@ -659,21 +659,21 @@ function renderVillaCards() {
 
 function getHomeHTML() {
     return `
-    <div class="pb-20 sm:pb-8">
-        <header class="sticky top-0 z-20 bg-white shadow-sm pb-4 pt-4 px-4 border-b border-gray-100">
-            <div class="flex justify-between items-center mb-4 max-w-5xl mx-auto font-body">
+    <div class="pb-20 sm:pb-8 font-body">
+        <header class="sticky top-0 z-20 bg-white shadow-sm py-4 px-4 border-b border-gray-100">
+            <div class="flex justify-between items-center max-w-5xl mx-auto">
                 <div class="flex items-center gap-2">
                     <div class="bg-primary text-white p-1.5 rounded-lg shadow-sm">
                         <i data-lucide="home" class="w-6 h-6"></i>
                     </div>
-                    <h1 class="text-2xl font-brand font-bold text-primary tracking-tight">Houmi <span class="text-[10px] font-body font-normal text-gray-400 align-top">v1.0</span></h1>
+                    <h1 class="text-2xl font-brand font-bold text-primary tracking-tight">Houmi <span class="text-[10px] font-body font-normal text-dark align-top">It's Family Time</span></h1>
                 </div>
-                <div class="flex gap-3 text-dark items-center">
-                    <button onclick="navigateTo('admin-dashboard')" class="hover:text-primary transition" title="Panel Admin">
+                <div class="flex gap-3 items-center">
+                    <button onclick="navigateTo('admin-dashboard')" class="hover:text-primary transition-colors" title="Panel Admin">
                         <i data-lucide="settings" class="w-6 h-6"></i>
                     </button>
-                    <i data-lucide="heart" class="w-6 h-6 cursor-pointer hover:text-primary transition"></i>
-                    <button class="bg-accent text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:bg-accent/90 transition font-body">Masuk</button>
+                    <i data-lucide="heart" class="w-6 h-6 cursor-pointer text-dark hover:text-primary transition-colors"></i>
+                    <button class="bg-accent text-white px-4 py-1.5 rounded-md text-sm font-bold shadow-sm hover:bg-accent/90 transition-colors">Masuk</button>
                 </div>
             </div>
             <div class="max-w-5xl mx-auto">
