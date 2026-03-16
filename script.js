@@ -664,33 +664,28 @@ function renderVillaCards() {
 function getHomeHTML() {
     return `
     <div class="pb-20 sm:pb-8 font-body">
-        <header class="sticky top-0 z-20 bg-white shadow-sm py-4 px-4 border-b border-gray-100">
+        <header class="sticky top-0 z-20 bg-primary shadow-lg py-4 px-4">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     <img src="https://houmi.izzahgroup.com/uploads/1773679372_houmi_logo.png" alt="Houmi Logo" class="w-10 h-10 object-contain">
-                    <h1 class="text-2xl font-brand font-bold text-primary tracking-tight">Houmi <span class="text-[10px] font-body font-normal text-dark align-top">It's Family Time</span></h1>
+                    <div>
+                        <h1 class="text-2xl font-brand font-bold text-secondary leading-none">Houmi</h1>
+                        <p class="text-[10px] font-body text-secondary/80 -mt-1">It's Family Time</p>
+                    </div>
                 </div>
-                <div class="flex gap-3 items-center">
-                    <button onclick="navigateTo('admin-dashboard')" class="hover:text-primary transition-colors" title="Panel Admin">
+                <div class="flex gap-4 items-center text-secondary">
+                    <button onclick="navigateTo('admin-dashboard')" class="hover:text-accent transition-colors" title="Panel Admin">
                         <i data-lucide="settings" class="w-6 h-6"></i>
                     </button>
-                    <i data-lucide="heart" class="w-6 h-6 cursor-pointer text-dark hover:text-primary transition-colors"></i>
+                    <i data-lucide="heart" class="w-6 h-6 cursor-pointer hover:text-accent transition-colors"></i>
                     <button class="bg-accent text-white px-4 py-1.5 rounded-md text-sm font-bold shadow-sm hover:bg-accent/90 transition-colors">Masuk</button>
                 </div>
             </div>
-            <div class="max-w-5xl mx-auto">
-                <div class="bg-gray-100 rounded-2xl p-3 flex items-center shadow-inner border border-gray-200">
+            <div class="max-w-5xl mx-auto mt-4">
+                <div class="bg-white rounded-xl p-3 flex items-center shadow-inner">
                     <i data-lucide="search" class="text-gray-400 w-5 h-5 mr-2"></i>
                     <div class="flex-1">
                         <input type="text" placeholder="Cari villa di Batu, Malang..." class="w-full bg-transparent border-none focus:outline-none text-sm font-medium text-gray-700 placeholder-gray-400" />
-                        <div class="flex text-[11px] text-gray-500 mt-0.5 gap-2 items-center">
-                            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> Bsk - Lusa</span>
-                            <span>•</span>
-                            <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> 2 Tamu</span>
-                        </div>
-                    </div>
-                    <div class="bg-white p-2 rounded-xl shadow-sm border border-gray-200 cursor-pointer hover:bg-gray-50">
-                        <i data-lucide="sliders-horizontal" class="text-gray-600 w-4 h-4"></i>
                     </div>
                 </div>
             </div>
