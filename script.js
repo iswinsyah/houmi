@@ -421,7 +421,7 @@ async function addMedia(e) {
     submitBtn.disabled = true;
     submitBtn.innerText = "Uploading...";
 
-    try {
+    try { 
         let finalUrl = form.mediaUrl.value;
         let type = 'image';
 
@@ -432,32 +432,38 @@ async function addMedia(e) {
 
             // Kirim ke upload.php
             const response = await fetch('upload.php', { method: 'POST', body: formData });
+
+            // Cek apakah response dari server adalah JSON atau HTML error
+            const contentType = response.headers.get("content-type");
+            if (!response.ok || !contentType || !contentType.includes("application/json")) {
+                const errorText = await response.text();
+                console.error("Server Response (bukan JSON):", errorText);
+                throw new Error(`Server mengembalikan error. Cek console browser untuk detail (Status: ${response.status})`);
+            }
+            
             const result = await response.json();
 
             if (result.success) {
                 finalUrl = result.url;
-                type = result.type;
             } else {
-                throw new Error(result.message);
+                throw new Error(result.message || 'Upload gagal di sisi server.');
             }
         }
 
         // Simpan ke database lokal
-        const newMedia = {
+        mediaData.unshift({
             id: Date.now(),
             type: type,
             name: form.mediaName.value,
             url: finalUrl
-        };
-        
-        mediaData.unshift(newMedia);
+        });
         saveMediaToStorage();
         form.reset();
         alert("Berhasil disimpan!");
 
     } catch (err) {
         alert("Gagal Upload: " + err.message);
-        console.error(err);
+        console.error("Upload Error Details:", err);
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = originalText;
@@ -615,9 +621,7 @@ function renderVillaCards() {
         <div onclick="openVillaDetail(${villa.id})" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition-shadow flex flex-col sm:flex-row mb-4 sm:mb-0">
             <div class="relative w-full sm:w-2/5 aspect-[4/3] sm:aspect-auto overflow-hidden bg-gray-200">
                 <img src="${villa.images[0]}" alt="${villa.name}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" />
-                <div class="absolute top-3 left-3 flex flex-col gap-2">
-                    ${villa.verified ? `<span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-md flex items-center shadow-md"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> VERIFIED</span>` : ''}
-                </div>
+                <div class="absolute top-3 left-3 flex flex-col gap-2">${villa.verified ? `<span class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-md flex items-center shadow-md"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> VERIFIED</span>` : ''}</div>
                 <div class="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-md">
                     <i data-lucide="image" class="w-3 h-3 inline mr-1"></i> ${villa.images.length} Foto
                 </div>
@@ -716,7 +720,7 @@ function getHomeHTML() {
             <div class="mt-10 mb-20">
                 <div class="flex justify-between items-end mb-4">
                     <h2 class="text-lg font-bold text-gray-800">Tips & Inspirasi Wisata</h2>
-                    <span class="text-xs text-red-600 font-semibold cursor-pointer">Lihat Semua</span>
+                    <span class="text-xs text-primary font-semibold cursor-pointer">Lihat Semua</span>
                 </div>
                 <div class="flex overflow-x-auto hide-scrollbar gap-4 pb-4">
                     ${articlesData.map(article => `
@@ -777,7 +781,7 @@ function getDetailHTML(villa) {
         <div class="max-w-3xl mx-auto px-4 py-6 bg-white sm:rounded-t-3xl sm:-mt-6 relative z-10 sm:shadow-sm">
             <div class="mb-6">
                 <div class="flex items-center gap-2 mb-2">
-                    ${villa.verified ? `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded flex items-center border border-blue-200"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> VERIFIED</span>` : ''}
+                    ${villa.verified ? `<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded flex items-center border border-primary/20"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> VERIFIED</span>` : ''}
                     <span class="bg-gray-100 text-gray-600 text-[10px] font-semibold px-2 py-0.5 rounded border border-gray-200">${villa.category}</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 leading-tight">${villa.name}</h1>
@@ -873,7 +877,7 @@ function getLoginHTML() {
             <form onsubmit="handleLogin(event)">
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="admin-pass" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none" placeholder="Masukkan password..." required>
+                    <input type="password" id="admin-pass" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" placeholder="Masukkan password..." required>
                     <p class="text-[10px] text-gray-400 mt-1">Hint: admin123</p>
                 </div>
                 <button type="submit" class="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary/90 transition">Masuk</button>
@@ -984,7 +988,7 @@ function getAdminArticlesHTML() {
         <main class="max-w-5xl mx-auto p-4">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-semibold">Daftar Posting</h2>
-                <button onclick="openArticleEditor()" class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-purple-700">
+                <button onclick="openArticleEditor()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-primary/90">
                     <i data-lucide="plus" class="w-4 h-4"></i> Tulis Baru
                 </button>
             </div>
@@ -999,7 +1003,7 @@ function getAdminArticlesHTML() {
                         <p class="text-xs text-gray-500">${article.date}</p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="openArticleEditor(${article.id})" class="text-blue-600 p-2 hover:bg-blue-50 rounded"><i data-lucide="edit" class="w-5 h-5"></i></button>
+                        <button onclick="openArticleEditor(${article.id})" class="text-primary p-2 hover:bg-primary/10 rounded"><i data-lucide="edit" class="w-5 h-5"></i></button>
                         <button onclick="deleteArticle(${article.id})" class="text-red-600 p-2 hover:bg-red-50 rounded"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                     </div>
                 </div>
@@ -1191,7 +1195,7 @@ function getAdminCRMHTML() {
                                         <button onclick="if(confirm('Hapus data ini?')) { bookingsData = bookingsData.filter(b => b.id != ${booking.id}); saveBookingsToStorage(); }" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-opacity"><i data-lucide="trash" class="w-3 h-3"></i></button>
                                     </div>
                                     <h4 class="font-bold text-gray-800 text-sm mb-0.5">${booking.customerName}</h4>
-                                    <div class="text-xs text-blue-600 mb-2 font-medium">${booking.villaName}</div>
+                                    <div class="text-xs text-primary mb-2 font-medium">${booking.villaName}</div>
                                     
                                     <div class="flex flex-wrap gap-2 text-[10px] text-gray-500 border-t pt-2 mt-1">
                                         <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${booking.date}</span>
@@ -1256,7 +1260,7 @@ function getMediaLibraryHTML() {
                             <p class="text-xs font-medium text-gray-700 truncate" title="${media.name}">${media.name}</p>
                             <div class="flex justify-between items-center mt-1">
                                 <span class="text-[10px] text-gray-400 uppercase">${media.type}</span>
-                                <button onclick="copyMediaLink('${media.url}')" class="text-[10px] text-blue-600 hover:underline">Copy URL</button>
+                                        <button onclick="copyMediaLink('${media.url}')" class="text-[10px] text-primary hover:underline">Copy URL</button>
                             </div>
                         </div>
                     </div>
