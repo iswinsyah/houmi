@@ -297,18 +297,62 @@
             navigateTo('admin-articles');
         }
 
-        function addMedia(e) {
+        async function addMedia(e) {
             e.preventDefault();
             const form = e.target;
-            const newMedia = {
-                id: Date.now(),
-                type: 'image',
-                name: form.mediaName.value,
-                url: form.mediaUrl.value
-            };
-            mediaData.unshift(newMedia);
-            saveMediaToStorage();
-            form.reset();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+
+            // Validasi: Harus pilih salah satu (File atau URL)
+            if (!form.mediaFile.files.length && !form.mediaUrl.value) {
+                alert("Silakan pilih file dari perangkat atau masukkan URL gambar.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Uploading...";
+
+            try {
+                let finalUrl = form.mediaUrl.value;
+                let type = 'image';
+
+                // Jika user memilih file, upload dulu ke server
+                if (form.mediaFile.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('mediaFile', form.mediaFile.files[0]);
+
+                    // Kirim ke upload.php
+                    const response = await fetch('upload.php', { method: 'POST', body: formData });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        finalUrl = result.url;
+                        type = result.type;
+                    } else {
+                        throw new Error(result.message);
+                    }
+                }
+
+                // Simpan ke database lokal
+                const newMedia = {
+                    id: Date.now(),
+                    type: type,
+                    name: form.mediaName.value,
+                    url: finalUrl
+                };
+                
+                mediaData.unshift(newMedia);
+                saveMediaToStorage();
+                form.reset();
+                alert("Berhasil disimpan!");
+
+            } catch (err) {
+                alert("Gagal Upload: " + err.message);
+                console.error(err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            }
         }
 
         function deleteMedia(id) {
@@ -874,12 +918,20 @@
                 <main class="max-w-5xl mx-auto p-4">
                     <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
                         <h3 class="font-bold text-gray-800 mb-3 text-sm">Tambah Media Baru</h3>
-                        <form onsubmit="addMedia(event)" class="flex gap-2 flex-col sm:flex-row">
-                            <input type="text" name="mediaName" placeholder="Nama Gambar (Contoh: Kolam Renang)" class="border p-2 rounded-lg flex-1 text-sm" required>
-                            <input type="url" name="mediaUrl" placeholder="URL Gambar (https://...)" class="border p-2 rounded-lg flex-[2] text-sm" required>
-                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700">Simpan</button>
+                        <form onsubmit="addMedia(event)" class="flex flex-col gap-3">
+                            <input type="text" name="mediaName" placeholder="Nama Gambar/Video (Contoh: Kolam Renang)" class="border p-2 rounded-lg w-full text-sm" required>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                                <div class="flex-1 w-full">
+                                    <input type="file" name="mediaFile" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept="image/*,video/*">
+                                </div>
+                                <div class="hidden sm:block text-xs font-bold text-gray-400">ATAU</div>
+                                <input type="url" name="mediaUrl" placeholder="Paste URL (Jika punya link luar)" class="border p-2 rounded-lg flex-1 w-full text-sm">
+                            </div>
+                            
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 w-full sm:w-auto self-end mt-2">Upload & Simpan</button>
                         </form>
-                        <p class="text-[10px] text-gray-400 mt-2">*Tips: Gunakan link gambar dari Unsplash, Google Photos, atau Image Hosting lainnya.</p>
+                        <p class="text-[10px] text-gray-400 mt-2">*Mendukung: JPG, PNG, MP4. File akan disimpan di server Hostinger Anda.</p>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         ${mediaData.map(media => `
