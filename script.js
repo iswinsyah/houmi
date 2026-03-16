@@ -899,19 +899,19 @@ function getAdminDashboardHTML() {
 
         <div class="flex flex-1">
             <!-- Sidebar -->
-            <aside class="w-64 bg-white shadow-md p-4 shrink-0 font-body">
+            <aside class="w-64 bg-primary shadow-md p-4 shrink-0 font-body">
                 <nav class="space-y-2">
-                    <button onclick="navigateTo('admin-crm')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
-                        <i data-lucide="kanban-square" class="w-5 h-5 text-orange-600"></i> CRM Pipeline
+                    <button onclick="navigateTo('admin-crm')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+                        <i data-lucide="kanban-square" class="w-5 h-5 text-secondary"></i> CRM Pipeline
                     </button>
-                    <button onclick="navigateTo('admin-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
-                        <i data-lucide="brain-circuit" class="w-5 h-5 text-pink-600"></i> AI Buyer Persona
+                    <button onclick="navigateTo('admin-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+                        <i data-lucide="brain-circuit" class="w-5 h-5 text-secondary"></i> AI Buyer Persona
                     </button>
-                    <button onclick="navigateTo('admin-media')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
-                        <i data-lucide="image" class="w-5 h-5 text-blue-600"></i> Media Library
+                    <button onclick="navigateTo('admin-media')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+                        <i data-lucide="image" class="w-5 h-5 text-secondary"></i> Media Library
                     </button>
-                    <button onclick="navigateTo('admin-articles')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
-                        <i data-lucide="book-open" class="w-5 h-5 text-purple-600"></i> Artikel
+                    <button onclick="navigateTo('admin-articles')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+                        <i data-lucide="book-open" class="w-5 h-5 text-secondary"></i> Artikel
                     </button>
                 </nav>
             </aside>
