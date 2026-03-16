@@ -831,7 +831,7 @@ function getDetailHTML(villa) {
                     <div class="text-lg sm:text-xl font-extrabold text-red-600 leading-none">
                         ${formatRupiah(villa.price)} <span class="text-xs font-normal text-gray-500">/mlm</span>
                     </div>
-                </div>
+        
                 <button onclick="showBookingModal('${villa.name}')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 sm:px-10 rounded-xl shadow-lg shadow-red-200 transition-transform active:scale-95 text-sm sm:text-base">
                 <button onclick="showBookingModal('${villa.name}', ${villa.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 sm:px-10 rounded-xl shadow-lg shadow-red-200 transition-transform active:scale-95 text-sm sm:text-base">
                     Pesan Sekarang
@@ -877,7 +877,7 @@ function getLoginHTML() {
                     <input type="password" id="admin-pass" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none" placeholder="Masukkan password..." required>
                     <p class="text-[10px] text-gray-400 mt-1">Hint: admin123</p>
                 </div>
-                <button type="submit" class="w-full bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition">Masuk</button>
+                <button type="submit" class="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary transition">Masuk</button>
                 <button type="button" onclick="navigateTo('home')" class="w-full mt-3 text-gray-500 text-sm hover:underline">Kembali ke Home</button>
             </form>
         </div>
