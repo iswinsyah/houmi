@@ -515,7 +515,7 @@ function submitBooking(e, villaName, villaId) {
 function showBookingModal(villaName, villaId) {
     const modalHTML = `
         <div id="booking-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl transform transition-all scale-100 opacity-100">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl transform transition-all scale-100 opacity-100 font-body">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold text-gray-800">Form Pemesanan</h3>
                     <button onclick="document.getElementById('booking-modal').remove()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -526,11 +526,11 @@ function showBookingModal(villaName, villaId) {
                     <div class="space-y-2 mb-4 h-64 overflow-y-auto pr-2 custom-scrollbar">
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-1">Nama Lengkap</label>
-                            <input type="text" name="name" class="w-full border p-2 rounded-lg text-sm focus:ring-1 focus:ring-red-500 outline-none" placeholder="Nama Pemesan" required>
+                            <input type="text" name="name" class="w-full border p-2 rounded-lg text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="Nama Pemesan" required>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-1">WhatsApp</label>
-                            <input type="tel" name="phone" class="w-full border p-2 rounded-lg text-sm focus:ring-1 focus:ring-red-500 outline-none" placeholder="08xxxxx" required>
+                            <input type="tel" name="phone" class="w-full border p-2 rounded-lg text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="08xxxxx" required>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -571,7 +571,7 @@ function showBookingModal(villaName, villaId) {
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-red-200">
+                    <button type="submit" class="w-full bg-accent hover:bg-accent/90 text-white font-bold py-3 rounded-xl transition-colors shadow-lg">
                         Pesan & Masuk CRM
                     </button>
                 </form>
@@ -641,12 +641,12 @@ function renderVillaCards() {
                 </div>
                 <div class="mt-auto">
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded">DISKON ${discount}%</span>
-                        <span class="text-gray-400 text-[10px] sm:text-xs line-through decoration-red-400">${formatRupiah(villa.oldPrice)}</span>
+                        <span class="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded">DISKON ${discount}%</span> <!-- Keep red for discount -->
+                        <span class="text-gray-400 text-[10px] sm:text-xs line-through decoration-red-400">${formatRupiah(villa.oldPrice)}</span> <!-- Keep red for old price -->
                     </div>
                     <div class="flex justify-between items-end">
                         <div>
-                            <span class="text-lg sm:text-xl font-bold text-red-600">${formatRupiah(villa.price)}</span>
+                            <span class="text-lg sm:text-xl font-bold text-red-600">${formatRupiah(villa.price)}</span> <!-- Keep red for prominent price -->
                             <span class="text-gray-500 text-[10px] sm:text-xs font-medium"> / malam</span>
                         </div>
                     </div>
@@ -661,19 +661,19 @@ function getHomeHTML() {
     return `
     <div class="pb-20 sm:pb-8">
         <header class="sticky top-0 z-20 bg-white shadow-sm pb-4 pt-4 px-4 border-b border-gray-100">
-            <div class="flex justify-between items-center mb-4 max-w-5xl mx-auto">
+            <div class="flex justify-between items-center mb-4 max-w-5xl mx-auto font-body">
                 <div class="flex items-center gap-2">
-                    <div class="bg-red-600 text-white p-1.5 rounded-lg shadow-sm shadow-red-200">
+                    <div class="bg-primary text-white p-1.5 rounded-lg shadow-sm">
                         <i data-lucide="home" class="w-6 h-6"></i>
                     </div>
-                    <h1 class="text-xl font-bold text-gray-800 tracking-tight">Houmi <span class="text-[10px] font-normal text-gray-400 align-top">v1.0</span></h1>
+                    <h1 class="text-2xl font-brand font-bold text-primary tracking-tight">Houmi <span class="text-[10px] font-body font-normal text-gray-400 align-top">v1.0</span></h1>
                 </div>
-                <div class="flex gap-3 text-gray-600 items-center">
-                    <button onclick="navigateTo('admin-dashboard')" class="hover:text-red-600 transition" title="Panel Admin">
+                <div class="flex gap-3 text-dark items-center">
+                    <button onclick="navigateTo('admin-dashboard')" class="hover:text-primary transition" title="Panel Admin">
                         <i data-lucide="settings" class="w-6 h-6"></i>
                     </button>
-                    <i data-lucide="heart" class="w-6 h-6 cursor-pointer hover:text-red-500 transition"></i>
-                    <i data-lucide="user" class="w-6 h-6 cursor-pointer hover:text-red-500 transition"></i>
+                    <i data-lucide="heart" class="w-6 h-6 cursor-pointer hover:text-primary transition"></i>
+                    <button class="bg-accent text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:bg-accent/90 transition font-body">Masuk</button>
                 </div>
             </div>
             <div class="max-w-5xl mx-auto">
@@ -696,7 +696,7 @@ function getHomeHTML() {
 
         <div class="flex overflow-x-auto hide-scrollbar py-4 px-4 gap-3 max-w-5xl mx-auto bg-gray-50 sticky top-[120px] z-10">
             ${getCategories().map(cat => `
-                <button onclick="setCategory('${cat}')" class="whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-sm border ${activeCategory === cat ? 'bg-red-600 text-white border-red-600 shadow-red-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'}">
+                <button onclick="setCategory('${cat}')" class="whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-sm border ${activeCategory === cat ? 'bg-primary text-white border-primary shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'}">
                     ${cat}
                 </button>
             `).join('')}
@@ -736,7 +736,7 @@ function getHomeHTML() {
         </main>
 
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe pt-2 px-6 flex justify-between sm:hidden z-20 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
-            <button class="flex flex-col items-center p-2 text-red-600">
+                    <button class="flex flex-col items-center p-2 text-primary">
                 <i data-lucide="search" class="w-6 h-6"></i>
                 <span class="text-[10px] mt-1 font-bold">Cari</span>
             </button>
@@ -782,17 +782,17 @@ function getDetailHTML(villa) {
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 leading-tight">${villa.name}</h1>
                 <p class="text-gray-500 text-sm flex items-center">
-                    <i data-lucide="map-pin" class="w-4 h-4 mr-1 text-red-500"></i> ${villa.location}
+                    <i data-lucide="map-pin" class="w-4 h-4 mr-1 text-primary"></i> ${villa.location}
                 </p>
             </div>
             <hr class="border-gray-100 mb-6" />
             <div class="mb-6">
                 <h2 class="text-lg font-bold text-gray-800 mb-3">Tentang Villa Ini</h2>
                 <p class="text-gray-600 text-sm leading-relaxed">${villa.description}</p>
-            </div>
+            </div> 
             <div class="mb-8">
                 <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-5 h-5 text-red-500"></i> Fasilitas Utama
+                    <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i> Fasilitas Utama
                 </h2>
                 <div class="grid grid-cols-2 gap-4">
                     ${villa.amenities.map(amenity => `
@@ -808,9 +808,9 @@ function getDetailHTML(villa) {
             <hr class="border-gray-100 mb-6" />
             <div class="mb-6">
                 <h2 class="text-lg font-bold text-gray-800 mb-1 flex items-center gap-2">
-                    <i data-lucide="calendar-days" class="w-5 h-5 text-red-500"></i> Cek Ketersediaan
+                    <i data-lucide="calendar-days" class="w-5 h-5 text-primary"></i> Cek Ketersediaan
                 </h2>
-                <p class="text-xs text-gray-500 mb-3">Tanda <span class="text-red-500 line-through">merah coret</span> berarti sudah terisi.</p>
+                <p class="text-xs text-gray-500 mb-3">Tanda <span class="text-red-500 line-through">merah coret</span> berarti sudah terisi.</p> <!-- Keep red for unavailability -->
                 ${calendarHTML}
                 <div class="mt-3 flex gap-2">
                     <div class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-3">
@@ -824,16 +824,15 @@ function getDetailHTML(villa) {
                 </div>
             </div>
         </div>
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.08)] z-40">
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.08)] z-40 font-body">
             <div class="max-w-3xl mx-auto flex justify-between items-center">
                 <div>
                     <div class="text-[10px] text-gray-400 line-through mb-0.5">${formatRupiah(villa.oldPrice)}</div>
-                    <div class="text-lg sm:text-xl font-extrabold text-red-600 leading-none">
+                    <div class="text-lg sm:text-xl font-extrabold text-red-600 leading-none"> <!-- Keep red for prominent price -->
                         ${formatRupiah(villa.price)} <span class="text-xs font-normal text-gray-500">/mlm</span>
                     </div>
-        
-                <button onclick="showBookingModal('${villa.name}')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 sm:px-10 rounded-xl shadow-lg shadow-red-200 transition-transform active:scale-95 text-sm sm:text-base">
-                <button onclick="showBookingModal('${villa.name}', ${villa.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 sm:px-10 rounded-xl shadow-lg shadow-red-200 transition-transform active:scale-95 text-sm sm:text-base">
+                </div>
+                <button onclick="showBookingModal('${villa.name}', ${villa.id})" class="bg-accent hover:bg-accent/90 text-white font-bold py-3 px-6 sm:px-10 rounded-xl shadow-lg transition-transform active:scale-95 text-sm sm:text-base">
                     Pesan Sekarang
                 </button>
             </div>
@@ -877,7 +876,7 @@ function getLoginHTML() {
                     <input type="password" id="admin-pass" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none" placeholder="Masukkan password..." required>
                     <p class="text-[10px] text-gray-400 mt-1">Hint: admin123</p>
                 </div>
-                <button type="submit" class="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary transition">Masuk</button>
+                <button type="submit" class="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary/90 transition">Masuk</button>
                 <button type="button" onclick="navigateTo('home')" class="w-full mt-3 text-gray-500 text-sm hover:underline">Kembali ke Home</button>
             </form>
         </div>
@@ -887,9 +886,9 @@ function getLoginHTML() {
 
 function getAdminDashboardHTML() {
     return `
-    <div class="min-h-screen bg-gray-100 pb-20">
-        <header class="bg-white shadow p-4 sticky top-0 z-10">
-            <div class="max-w-5xl mx-auto flex justify-between items-center">
+    <div class="min-h-screen bg-gray-100 flex flex-col">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 shrink-0 font-body">
+            <div class="max-w-full mx-auto flex justify-between items-center">
                 <h1 class="text-xl font-bold text-gray-800">Dashboard Admin</h1>
                 <div class="flex gap-2">
                     <button onclick="navigateTo('home')" class="px-3 py-1 text-sm border rounded hover:bg-gray-50">Lihat Web</button>
@@ -897,55 +896,49 @@ function getAdminDashboardHTML() {
                 </div>
             </div>
         </header>
-        <main class="max-w-5xl mx-auto p-4">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-                <button onclick="navigateTo('admin-crm')" class="bg-orange-600 text-white p-4 rounded-xl shadow-sm hover:bg-orange-700 text-left flex items-center justify-between group col-span-2 sm:col-span-1 border border-orange-500">
-                    <div>
-                        <div class="font-bold text-lg">CRM</div>
-                        <div class="text-xs text-orange-200">Pipeline & Order</div>
+
+        <div class="flex flex-1">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white shadow-md p-4 shrink-0 font-body">
+                <nav class="space-y-2">
+                    <button onclick="navigateTo('admin-crm')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
+                        <i data-lucide="kanban-square" class="w-5 h-5 text-orange-600"></i> CRM Pipeline
+                    </button>
+                    <button onclick="navigateTo('admin-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
+                        <i data-lucide="brain-circuit" class="w-5 h-5 text-pink-600"></i> AI Buyer Persona
+                    </button>
+                    <button onclick="navigateTo('admin-media')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
+                        <i data-lucide="image" class="w-5 h-5 text-blue-600"></i> Media Library
+                    </button>
+                    <button onclick="navigateTo('admin-articles')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition text-gray-700 font-medium">
+                        <i data-lucide="book-open" class="w-5 h-5 text-purple-600"></i> Artikel
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area for Dashboard -->
+            <main class="flex-1 p-4 overflow-y-auto font-body">
+                <div class="max-w-5xl mx-auto">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-lg text-gray-800">${appData.length} Villa</div>
+                                <div class="text-xs text-gray-500">Total Properti</div>
+                            </div>
+                            <i data-lucide="home" class="w-8 h-8 text-gray-300"></i>
+                        </div>
+                        <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-lg text-gray-800">${articlesData.length} Post</div>
+                                <div class="text-xs text-gray-500">Total Artikel</div>
+                            </div>
+                            <i data-lucide="file-text" class="w-8 h-8 text-gray-300"></i>
+                        </div>
                     </div>
-                    <i data-lucide="kanban-square" class="w-8 h-8 opacity-50 group-hover:opacity-100 transition"></i>
-                </button>
-                <button onclick="navigateTo('admin-generator')" class="bg-pink-600 text-white p-4 rounded-xl shadow-sm hover:bg-pink-700 text-left flex items-center justify-between group col-span-2 sm:col-span-1 border border-pink-500">
-                    <div>
-                        <div class="font-bold text-lg">AI Persona</div>
-                        <div class="text-xs text-pink-200">Analisa Pembeli</div>
-                    </div>
-                    <i data-lucide="brain-circuit" class="w-8 h-8 opacity-50 group-hover:opacity-100 transition"></i>
-                </button>
-                <button onclick="navigateTo('admin-media')" class="bg-blue-600 text-white p-4 rounded-xl shadow-sm hover:bg-blue-700 text-left flex items-center justify-between group">
-                    <div>
-                        <div class="font-bold text-lg">Media Library</div>
-                        <div class="text-xs text-blue-200">Kelola Gambar & Foto</div>
-                    </div>
-                    <i data-lucide="image" class="w-8 h-8 opacity-50 group-hover:opacity-100 transition"></i>
-                </button>
-                <button onclick="navigateTo('admin-articles')" class="bg-purple-600 text-white p-4 rounded-xl shadow-sm hover:bg-purple-700 text-left flex items-center justify-between group">
-                    <div>
-                        <div class="font-bold text-lg">Artikel</div>
-                        <div class="text-xs text-purple-200">Blog & SEO</div>
-                    </div>
-                    <i data-lucide="book-open" class="w-8 h-8 opacity-50 group-hover:opacity-100 transition"></i>
-                </button>
-                 <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex items-center justify-between">
-                    <div>
-                        <div class="font-bold text-lg text-gray-800">${appData.length} Villa</div>
-                        <div class="text-xs text-gray-500">Total Properti</div>
-                    </div>
-                    <i data-lucide="home" class="w-8 h-8 text-gray-300"></i>
-                </div>
-                <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex items-center justify-between">
-                    <div>
-                        <div class="font-bold text-lg text-gray-800">${articlesData.length} Post</div>
-                        <div class="text-xs text-gray-500">Total Artikel</div>
-                    </div>
-                    <i data-lucide="file-text" class="w-8 h-8 text-gray-300"></i>
-                </div>
-            </div>
-            <div class="flex justify-between items-center mb-6">
+
+                    <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-semibold">Daftar Villa</h2>
-                <button onclick="openEditor()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-green-700">
+                        <button onclick="openEditor()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-primary/90">
                     <i data-lucide="plus" class="w-4 h-4"></i> Tambah Villa
                 </button>
             </div>
@@ -966,7 +959,7 @@ function getAdminDashboardHTML() {
                                 <td class="px-4 py-3 font-medium">${villa.name}</td>
                                 <td class="px-4 py-3">${formatRupiah(villa.price)}</td>
                                 <td class="px-4 py-3"><span class="bg-gray-100 px-2 py-1 rounded text-xs">${villa.category}</span></td>
-                                <td class="px-4 py-3 text-right flex justify-end gap-2">
+                                        <td class="px-4 py-3 text-right flex justify-end gap-2 shrink-0">
                                     <button onclick="openEditor(${villa.id})" class="text-blue-600 hover:text-blue-800 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
                                     <button onclick="deleteVilla(${villa.id})" class="text-red-600 hover:text-red-800 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </td>
@@ -983,7 +976,7 @@ function getAdminDashboardHTML() {
 
 function getAdminArticlesHTML() {
     return `
-    <div class="min-h-screen bg-gray-100 pb-20">
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
         <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
             <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
             <h1 class="text-xl font-bold text-gray-800">Kelola Artikel</h1>
@@ -1020,7 +1013,7 @@ function getAdminArticlesHTML() {
 
 function getAdminGeneratorHTML() {
     return `
-    <div class="min-h-screen bg-gray-100 pb-20">
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
         <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
             <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
             <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -1037,7 +1030,7 @@ function getAdminGeneratorHTML() {
                     AI akan memindai data dari <strong>${bookingsData.length} leads</strong> di CRM Anda untuk menemukan pola perilaku dan karakteristik target market Anda.
                 </p>
                 
-                <button id="btn-generate" onclick="generateBuyerPersona()" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-pink-700 shadow-lg shadow-pink-200 transition-all flex items-center gap-2 mx-auto">
+                <button id="btn-generate" onclick="generateBuyerPersona()" class="bg-accent text-white font-bold py-3 px-8 rounded-xl hover:bg-accent/90 shadow-lg transition-all flex items-center gap-2 mx-auto">
                     <i data-lucide="sparkles" class="w-5 h-5"></i> Analisa Sekarang
                 </button>
             </div>
@@ -1061,7 +1054,7 @@ function getArticleEditorHTML() {
     };
     
     return `
-    <div class="min-h-screen bg-gray-50 pb-20">
+    <div class="min-h-screen bg-gray-50 pb-20 font-body">
         <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
             <button onclick="navigateTo('admin-articles')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
             <h1 class="text-xl font-bold text-gray-800">${editingArticleId ? 'Edit Artikel' : 'Tulis Artikel'}</h1>
@@ -1086,7 +1079,7 @@ function getArticleEditorHTML() {
                     <textarea name="content" rows="12" class="w-full border p-2 rounded-lg" placeholder="Tulis konten menarik di sini..." required>${article.content}</textarea>
                 </div>
                 <div class="pt-4">
-                    <button type="submit" class="w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-200">Simpan Artikel</button>
+                    <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary/90 shadow-lg">Simpan Artikel</button>
                 </div>
             </form>
         </main>
@@ -1100,7 +1093,7 @@ function getEditorHTML() {
         description: '', amenities: [], images: []
     };
     
-    return `
+    return ` 
     <div class="min-h-screen bg-gray-50 pb-20">
         <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
             <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
@@ -1108,11 +1101,11 @@ function getEditorHTML() {
         </header>
         <main class="max-w-2xl mx-auto p-4">
             <form onsubmit="saveVillaData(event)" class="bg-white p-6 rounded-xl shadow-sm space-y-4">
-                <div>
+                <div> 
                     <label class="block text-sm font-bold text-gray-700 mb-1">Nama Villa</label>
                     <input type="text" name="name" value="${villa.name}" class="w-full border p-2 rounded-lg" required>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4"> 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Harga (Angka)</label>
                         <input type="number" name="price" value="${villa.price}" class="w-full border p-2 rounded-lg" required>
@@ -1122,7 +1115,7 @@ function getEditorHTML() {
                         <input type="number" name="oldPrice" value="${villa.oldPrice}" class="w-full border p-2 rounded-lg">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-4"> 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Lokasi</label>
                         <input type="text" name="location" value="${villa.location}" class="w-full border p-2 rounded-lg" required>
@@ -1132,21 +1125,21 @@ function getEditorHTML() {
                         <input type="text" name="category" value="${villa.category}" class="w-full border p-2 rounded-lg" placeholder="Contoh: Keluarga" required>
                     </div>
                 </div>
-                <div>
+                        <div> 
                     <label class="block text-sm font-bold text-gray-700 mb-1">Deskripsi</label>
                     <textarea name="description" rows="3" class="w-full border p-2 rounded-lg" required>${villa.description}</textarea>
                 </div>
-                <div>
+                        <div> 
                     <label class="block text-sm font-bold text-gray-700 mb-1">Fasilitas (Pisahkan dengan koma)</label>
                     <input type="text" name="amenities" value="${Array.isArray(villa.amenities) ? villa.amenities.join(', ') : ''}" class="w-full border p-2 rounded-lg" placeholder="WiFi, Kolam Renang, TV">
                 </div>
-                <div>
+                        <div> 
                     <label class="block text-sm font-bold text-gray-700 mb-1">Link Gambar (Satu per baris)</label>
                     <textarea name="images" rows="4" class="w-full border p-2 rounded-lg font-mono text-xs" placeholder="https://...">${Array.isArray(villa.images) ? villa.images.join('\n') : ''}</textarea>
                     <p class="text-[10px] text-gray-400 mt-1">Gunakan link gambar langsung (Unsplash/Google Photos)</p>
                 </div>
-                <div class="pt-4">
-                    <button type="submit" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200">Simpan Data</button>
+                        <div class="pt-4"> 
+                            <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary/90 shadow-lg">Simpan Data</button>
                 </div>
             </form>
         </main>
@@ -1163,7 +1156,7 @@ function getAdminCRMHTML() {
     ];
 
     return `
-    <div class="min-h-screen bg-gray-100 flex flex-col h-screen overflow-hidden">
+    <div class="min-h-screen bg-gray-100 flex flex-col h-screen overflow-hidden font-body">
         <header class="bg-white shadow p-4 z-10 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
                 <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6 text-gray-600"></i></button>
@@ -1222,7 +1215,7 @@ function getAdminCRMHTML() {
 
 function getMediaLibraryHTML() {
     return `
-    <div class="min-h-screen bg-gray-100 pb-20">
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
         <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
             <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
             <h1 class="text-xl font-bold text-gray-800">Media Library</h1>
