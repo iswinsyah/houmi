@@ -8,14 +8,38 @@
     
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2D4F36',
+                        secondary: '#F5F7F5',
+                        accent: '#E8B059',
+                        dark: '#333333',
+                        sand: '#D2B48C',
+                    },
+                    fontFamily: {
+                        brand: ['"Poiret One"', 'sans-serif'],
+                        body: ['"Montserrat"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Load Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <!-- Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poiret+One&display=swap" rel="stylesheet">
+    
     <!-- Load Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 antialiased overflow-x-hidden">
+<body class="bg-secondary font-body text-dark antialiased overflow-x-hidden">
 
     <!-- Container Utama Aplikasi -->
     <div id="app" class="w-full h-full min-h-screen relative"></div>
