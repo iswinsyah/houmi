@@ -667,9 +667,7 @@ function getHomeHTML() {
         <header class="sticky top-0 z-20 bg-white shadow-sm py-4 px-4 border-b border-gray-100">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
                 <div class="flex items-center gap-2">
-                    <div class="bg-primary text-white p-1.5 rounded-lg shadow-sm">
-                        <i data-lucide="home" class="w-6 h-6"></i>
-                    </div>
+                    <img src="URL_LOGO_ANDA_DISINI" alt="Houmi Logo" class="w-10 h-10 object-contain">
                     <h1 class="text-2xl font-brand font-bold text-primary tracking-tight">Houmi <span class="text-[10px] font-body font-normal text-dark align-top">It's Family Time</span></h1>
                 </div>
                 <div class="flex gap-3 items-center">
