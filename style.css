@@ -1,0 +1,26 @@
+/* CSS Tambahan untuk menyembunyikan scrollbar di menu kategori tapi tetap bisa digeser */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Area aman untuk tombol navigasi bawah di HP modern (iPhone dll) */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+
+/* Menghilangkan efek highlight biru saat disentuh di HP */
+body { -webkit-tap-highlight-color: transparent; }
+
+/* Animasi mulus saat buka halaman detail */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+.slide-in { animation: slideIn 0.3s ease-out forwards; }
+
+/* Tambahan untuk scroll snap pada galeri gambar */
+.snap-mandatory { scroll-snap-type: x mandatory; }
+.snap-center { scroll-snap-align: center; }
+
+/* Custom Scrollbar untuk area sempit */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
