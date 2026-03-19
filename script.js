@@ -145,6 +145,20 @@ function setCategory(cat) {
     renderApp();
 }
 
+function getWhatsAppFloatingButton() {
+    return `
+    <a href="https://wa.me/6281234567890?text=Halo%20CS%20AI%20Houmi,%20bisa%20bantu%20rekomendasikan%20villa%20untuk%20saya?" target="_blank" class="fixed bottom-24 sm:bottom-8 right-4 sm:right-8 z-50 group">
+        <div class="absolute bottom-full right-0 mb-3 w-max bg-white text-dark text-xs font-bold px-4 py-2 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none origin-bottom-right">
+            Tanya CS AI 🤖
+            <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white transform rotate-45"></div>
+        </div>
+        <div class="bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-[0_4px_14px_0_rgba(37,211,102,0.39)] hover:shadow-[0_6px_20px_rgba(37,211,102,0.23)] transition-all transform hover:scale-110 flex items-center justify-center">
+            <i data-lucide="message-circle" class="w-7 h-7"></i>
+        </div>
+    </a>
+    `;
+}
+
 // --- AI GENERATOR FUNCTION ---
 async function generateBuyerPersona() {
     const btn = document.getElementById('btn-generate');
@@ -746,6 +760,7 @@ function getHomeHTML() {
                 <span class="text-[10px] mt-1 font-medium">Akun</span>
             </button>
         </div>
+        ${getWhatsAppFloatingButton()}
     </div>
     `;
 }
@@ -834,6 +849,7 @@ function getDetailHTML(villa) {
                 </button>
             </div>
         </div>
+        ${getWhatsAppFloatingButton()}
     </div>
     `;
 }
@@ -855,6 +871,7 @@ function getArticleDetailHTML(article) {
                 ${article.content}
             </div>
         </main>
+        ${getWhatsAppFloatingButton()}
     </div>
     `;
 }
