@@ -1,0 +1,9 @@
+# Abaikan file konfigurasi rahasia
+config.php
+
+# Abaikan folder upload (karena isinya gambar user, berat kalau masuk git)
+uploads/
+
+# File sistem
+.DS_Store
+Thumbs.db

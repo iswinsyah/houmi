@@ -87,6 +87,19 @@ let mediaData = JSON.parse(localStorage.getItem('HOUMI_MEDIA')) || DEFAULT_MEDIA
 let articlesData = JSON.parse(localStorage.getItem('HOUMI_ARTICLES')) || DEFAULT_ARTICLES;
 let bookingsData = JSON.parse(localStorage.getItem('HOUMI_BOOKINGS')) || [];
 
+// Default System Prompt untuk AI
+const DEFAULT_AI_PROMPT = `
+Anda adalah 'Mimin Houmi', Customer Service AI untuk Houmi Villa di Batu, Malang.
+Gaya bicara: Ramah, membantu, dan menggunakan emoji 😊.
+
+DATA VILLA:
+- Tropis Pool Villa (Rp 1.5jt, 3 Kamar, Pool)
+- Cabin Nature (Rp 850rb, Hutan Pinus, 2 Kamar)
+- Grand Family (Rp 2.2jt, Mewah, Karaoke, 5 Kamar)
+
+Jika user ingin booking, arahkan ke website atau admin WA.
+`;
+
 function saveMediaToStorage() {
     localStorage.setItem('HOUMI_MEDIA', JSON.stringify(mediaData));
     renderApp();
@@ -124,6 +137,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwKhbf0doH9ue1Gya9ubLU6ZqrLYM4HkwtTmlGy-exkaWJe3wLTAC3HUR5h2w7fg1Q/exec";
+const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
@@ -147,9 +161,9 @@ function setCategory(cat) {
 
 function getWhatsAppFloatingButton() {
     return `
-    <a href="https://wa.me/6281234567890?text=Halo%20CS%20AI%20Houmi,%20bisa%20bantu%20rekomendasikan%20villa%20untuk%20saya?" target="_blank" class="fixed bottom-24 sm:bottom-8 right-4 sm:right-8 z-50 group">
+    <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Halo%20Gemini,%20tolong%20bantu%20saya%20mencari%20villa%20terbaik%20di%20Houmi..." target="_blank" class="fixed bottom-24 sm:bottom-8 right-4 sm:right-8 z-50 group">
         <div class="absolute bottom-full right-0 mb-3 w-max bg-white text-dark text-xs font-bold px-4 py-2 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none origin-bottom-right">
-            Tanya CS AI 🤖
+            Tanya Gemini AI 🧠
             <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white transform rotate-45"></div>
         </div>
         <div class="bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-[0_4px_14px_0_rgba(37,211,102,0.39)] hover:shadow-[0_6px_20px_rgba(37,211,102,0.23)] transition-all transform hover:scale-110 flex items-center justify-center">
@@ -525,7 +539,7 @@ function submitBooking(e, villaName, villaId) {
     
     // Simulasi kirim ke WA juga biar real
     const waMessage = `Halo Admin Houmi, saya ingin pesan ${villaName}.\n\nNama: ${form.name.value}\nAsal Kota: ${form.city.value}\nJumlah Tamu: ${form.pax.value} orang\nTujuan: ${form.purpose.value}\nTanggal: ${form.date.value} (${form.nights.value} malam).`;
-    const waLink = `https://wa.me/6281234567890?text=${encodeURIComponent(waMessage)}`; // Ganti nomor WA Bos disini
+    const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
     
     if(confirm('Data tersimpan di CRM! Lanjut kirim pesan WhatsApp ke Admin?')) {
         window.open(waLink, '_blank');
@@ -927,6 +941,9 @@ function getAdminDashboardHTML() {
                     <button onclick="navigateTo('admin-articles')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
                         <i data-lucide="book-open" class="w-5 h-5 text-secondary"></i> Artikel
                     </button>
+                    <button onclick="navigateTo('admin-training')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium bg-white/5">
+                        <i data-lucide="bot" class="w-5 h-5 text-accent"></i> Training AI
+                    </button>
                 </nav>
             </aside>
 
@@ -1057,6 +1074,41 @@ function getAdminGeneratorHTML() {
 
             <!-- Result Area -->
             <div id="persona-result" class="hidden mt-8 bg-white p-8 rounded-2xl shadow-lg border border-gray-100 slide-in text-left"></div>
+        </main>
+    </div>
+    `;
+}
+
+function getAdminTrainingHTML() {
+    // Kita tidak simpan prompt di localStorage karena source of truth ada di GAS.
+    // Idealnya kita fetch dulu, tapi untuk simplifikasi kita pakai default/placeholder dulu
+    // atau Admin bisa copy-paste prompt lama mereka.
+    
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="bot" class="w-6 h-6 text-accent"></i> Training CS AI
+            </h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <div class="mb-6 bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800">
+                    <h3 class="font-bold mb-1 flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i> Info Penting</h3>
+                    <p>Apa yang Anda tulis di sini akan menjadi <strong>"Otak"</strong> bagi AI di WhatsApp & Website. Tuliskan info harga, fasilitas, dan aturan menjawab dengan jelas.</p>
+                </div>
+
+                <form onsubmit="saveAIPrompt(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Instruksi & Pengetahuan Dasar (System Prompt)</label>
+                        <textarea name="prompt" rows="15" class="w-full border-2 border-gray-300 p-4 rounded-xl focus:border-accent focus:ring-0 font-mono text-sm leading-relaxed" placeholder="Contoh: Anda adalah CS Houmi...">${DEFAULT_AI_PROMPT.trim()}</textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-accent text-white font-bold py-3 px-8 rounded-xl hover:bg-accent/90 shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-5 h-5"></i> Simpan Pengetahuan Baru
+                    </button>
+                </form>
+            </div>
         </main>
     </div>
     `;
@@ -1293,6 +1345,8 @@ function renderApp() {
         appDiv.innerHTML = getAdminCRMHTML();
     } else if (currentPage === 'admin-generator') {
         appDiv.innerHTML = getAdminGeneratorHTML();
+    } else if (currentPage === 'admin-training') {
+        appDiv.innerHTML = getAdminTrainingHTML();
     } else if (currentPage === 'admin-articles') {
         appDiv.innerHTML = getAdminArticlesHTML();
     } else if (currentPage === 'admin-article-edit') {
