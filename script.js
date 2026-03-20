@@ -511,38 +511,85 @@ function copyMediaLink(url) {
     });
 }
 
-function submitBooking(e, villaName, villaId) {
+async function submitBooking(e, villaName, villaId) {
     e.preventDefault();
     const form = e.target;
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.innerText;
+
+    btn.disabled = true;
+    btn.innerText = "Sedang Memproses...";
     
-    const newBooking = {
-        id: Date.now(),
-        villaId: villaId,
-        villaName: villaName,
-        customerName: form.name.value,
-        city: form.city.value,     // Data Baru
-        pax: form.pax.value,       // Data Baru
-        purpose: form.purpose.value, // Data Baru
-        source: form.source.value, // Data Baru
-        phone: form.phone.value,
-        date: form.date.value,
-        nights: form.nights.value,
-        status: 'new', // Status awal: new, contacted, booked, done
-        notes: '',
-        createdAt: new Date().toLocaleDateString('id-ID')
-    };
-    
-    bookingsData.unshift(newBooking);
-    saveBookingsToStorage();
-    
-    document.getElementById('booking-modal').remove();
-    
-    // Simulasi kirim ke WA juga biar real
-    const waMessage = `Halo Admin Houmi, saya ingin pesan ${villaName}.\n\nNama: ${form.name.value}\nAsal Kota: ${form.city.value}\nJumlah Tamu: ${form.pax.value} orang\nTujuan: ${form.purpose.value}\nTanggal: ${form.date.value} (${form.nights.value} malam).`;
-    const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
-    
-    if(confirm('Data tersimpan di CRM! Lanjut kirim pesan WhatsApp ke Admin?')) {
-        window.open(waLink, '_blank');
+    try {
+        let proofUrl = '';
+
+        // 1. Cek & Upload Bukti Transfer jika ada
+        if (form.proof.files.length > 0) {
+            const formData = new FormData();
+            formData.append('mediaFile', form.proof.files[0]);
+
+            const response = await fetch('upload.php', { method: 'POST', body: formData });
+            const result = await response.json();
+
+            if (result.success) {
+                proofUrl = result.url;
+            } else {
+                throw new Error("Gagal upload bukti bayar: " + result.message);
+            }
+        }
+
+        // 2. Simpan Data Booking
+        const newBooking = {
+            id: Date.now(),
+            villaId: villaId,
+            villaName: villaName,
+            customerName: form.name.value,
+            city: form.city.value,
+            pax: form.pax.value,
+            purpose: form.purpose.value,
+            source: form.source.value,
+            phone: form.phone.value,
+            date: form.date.value,
+            nights: form.nights.value,
+            paymentType: form.paymentType.value, // Data Baru: Full/DP
+            proofUrl: proofUrl,                  // Data Baru: URL Bukti
+            status: proofUrl ? 'booked' : 'new', // Kalau ada bukti, status langsung 'booked' (bisa disesuaikan)
+            notes: '',
+            createdAt: new Date().toLocaleDateString('id-ID')
+        };
+        
+        bookingsData.unshift(newBooking);
+        saveBookingsToStorage();
+        
+        document.getElementById('booking-modal').remove();
+        
+        // 3. Siapkan Pesan WA
+        let waMessage = `Halo Admin Houmi, saya ingin pesan *${villaName}*.\n\n` +
+            `👤 Nama: ${form.name.value}\n` +
+            `📱 WA: ${form.phone.value}\n` +
+            `🏙 Asal: ${form.city.value}\n` +
+            `📅 Tanggal: ${form.date.value} (${form.nights.value} malam)\n` +
+            `👥 Tamu: ${form.pax.value} Orang\n` +
+            `💳 Pembayaran: ${form.paymentType.value}\n`;
+
+        if (proofUrl) {
+            waMessage += `📎 Bukti Transfer: ${proofUrl}\n`;
+            waMessage += `(Mohon dicek ya min)`;
+        } else {
+            waMessage += `(Saya belum transfer, mohon info rekening)`;
+        }
+        
+        const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
+        
+        if(confirm('Pemesanan berhasil disimpan! Lanjut konfirmasi ke WhatsApp Admin?')) {
+            window.open(waLink, '_blank');
+        }
+
+    } catch (err) {
+        alert("Terjadi kesalahan: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
     }
 }
 
@@ -603,6 +650,29 @@ function showBookingModal(villaName, villaId) {
                                 <option value="Google">Google Search</option>
                                 <option value="Rekomendasi Teman">Rekomendasi Teman</option>
                             </select>
+                        </div>
+
+                        <!-- Bagian Pembayaran -->
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 mt-2">
+                            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Konfirmasi Pembayaran</p>
+                            
+                            <div class="mb-3">
+                                <div class="text-xs text-gray-600 mb-1">Transfer ke: <span class="font-mono font-bold text-dark">BCA 123-456-7890 (Houmi)</span></div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="paymentType" value="DP (Uang Muka)" class="peer sr-only" required>
+                                    <div class="text-center text-xs border rounded py-2 peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-colors">DP 50%</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="paymentType" value="Lunas" class="peer sr-only" required>
+                                    <div class="text-center text-xs border rounded py-2 peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-colors">Lunas</div>
+                                </label>
+                            </div>
+
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Upload Bukti Transfer (Opsional)</label>
+                            <input type="file" name="proof" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90 cursor-pointer">
                         </div>
                     </div>
                     <button type="submit" class="w-full bg-accent hover:bg-accent/90 text-white font-bold py-3 rounded-xl transition-colors shadow-lg">
