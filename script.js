@@ -239,6 +239,93 @@ async function generateBuyerPersona() {
     }
 }
 
+// --- SEO ARTICLE GENERATOR ---
+let generatedArticleCache = null; // Menyimpan hasil generate sementara
+
+async function generateSEOArticle() {
+    const btn = document.getElementById('btn-article-gen');
+    const resultArea = document.getElementById('article-gen-result');
+    const loadingArea = document.getElementById('article-gen-loading');
+    const topic = document.getElementById('article-topic').value;
+    const keywords = document.getElementById('article-keywords').value;
+
+    if (!topic) { alert("Topik artikel harus diisi!"); return; }
+
+    if (GAS_API_URL === "PASTE_URL_WEB_APP_GOOGLE_SCRIPT_DISINI" || GAS_API_URL === "") {
+        alert("URL Google Apps Script belum dipasang!"); return;
+    }
+
+    btn.disabled = true;
+    resultArea.classList.add('hidden');
+    loadingArea.classList.remove('hidden');
+
+    try {
+        const prompt = `
+        Bertindaklah sebagai Senior SEO Content Writer spesialis pariwisata Batu & Malang.
+        Tulis artikel Blog untuk website "Houmi Villa" yang memenuhi standar Google E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness).
+
+        Topik: ${topic}
+        Target Keyword: ${keywords}
+        
+        Panduan E-E-A-T:
+        1. Experience: Masukkan nuansa pengalaman lokal (nama jalan, cuaca, tips insider).
+        2. Trust: Gunakan nada bicara profesional namun ramah (Human Touch).
+        3. Soft Selling: Sisipkan rekomendasi menginap di Houmi Villa secara natural di tengah/akhir.
+        
+        FORMAT OUTPUT (Wajib JSON):
+        {
+            "title": "Judul Clickbait & SEO Friendly (H1)",
+            "content": "Isi artikel lengkap dalam format HTML (gunakan tag <p>, <h2>, <ul>, <li>). Minimal 400 kata."
+        }
+        `;
+
+        const response = await fetch(GAS_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt }) 
+        });
+
+        const data = await response.json();
+        let aiText = data.candidates[0].content.parts[0].text;
+        // Bersihkan markdown block jika ada
+        aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        generatedArticleCache = JSON.parse(aiText);
+        
+        // Render Preview
+        document.getElementById('preview-title').innerText = generatedArticleCache.title;
+        document.getElementById('preview-content').innerHTML = generatedArticleCache.content;
+        
+        resultArea.classList.remove('hidden');
+    } catch (error) {
+        alert("Gagal generate (Coba topik lain/pendekkan keyword): " + error.message);
+        console.error(error);
+    } finally {
+        loadingArea.classList.add('hidden');
+        btn.disabled = false;
+    }
+}
+
+function saveGeneratedArticleToDraft() {
+    if (!generatedArticleCache) return;
+
+    const newArticle = {
+        id: Date.now(),
+        title: generatedArticleCache.title,
+        image: "https://images.unsplash.com/photo-1596401057633-565652f50000?auto=format&fit=crop&w=800&q=80", // Placeholder
+        date: new Date().toISOString().split('T')[0],
+        content: generatedArticleCache.content
+    };
+
+    articlesData.unshift(newArticle);
+    saveArticlesToStorage();
+    
+    alert("Artikel berhasil disimpan! Mengarahkan ke editor...");
+    // Buka editor untuk artikel yang baru saja dibuat
+    editingArticleId = newArticle.id;
+    navigateTo('admin-article-edit');
+}
+
 // --- CONTENT CALENDAR GENERATOR ---
 async function generateContentCalendar() {
     const btn = document.getElementById('btn-calendar');
@@ -785,6 +872,26 @@ function allowDrop(ev) {
     ev.preventDefault();
 }
 
+function deleteBooking(id) {
+    if(confirm('Hapus data booking ini permanen?')) {
+        bookingsData = bookingsData.filter(b => b.id !== id);
+        saveBookingsToStorage();
+    }
+}
+
+function acceptBooking(id) {
+    const booking = bookingsData.find(b => b.id === id);
+    if (!booking) return;
+    
+    // Logika tombol Accept: Maju ke tahap berikutnya
+    let nextStatus = 'booked'; // Default target
+    if (booking.status === 'booked') nextStatus = 'done';
+    if (booking.status === 'done') return; // Mentok di selesai
+
+    booking.status = nextStatus;
+    saveBookingsToStorage();
+}
+
 function drag(ev, id) {
     ev.dataTransfer.setData("text", id);
 }
@@ -1108,6 +1215,9 @@ function getAdminDashboardHTML() {
                     <button onclick="navigateTo('admin-articles')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
                         <i data-lucide="book-open" class="w-5 h-5 text-secondary"></i> Artikel
                     </button>
+                    <button onclick="navigateTo('admin-article-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+                        <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO
+                    </button>
                     <button onclick="navigateTo('admin-training')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium bg-white/5">
                         <i data-lucide="bot" class="w-5 h-5 text-accent"></i> Training AI
                     </button>
@@ -1241,6 +1351,66 @@ function getAdminGeneratorHTML() {
 
             <!-- Result Area -->
             <div id="persona-result" class="hidden mt-8 bg-white p-8 rounded-2xl shadow-lg border border-gray-100 slide-in text-left"></div>
+        </main>
+    </div>
+    `;
+}
+
+function getAdminArticleGeneratorHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="pen-tool" class="w-6 h-6 text-green-600"></i> Generator Artikel SEO
+            </h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="bg-green-50 p-3 rounded-full text-green-600">
+                        <i data-lucide="search" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">Topik & Keyword</h2>
+                        <p class="text-sm text-gray-500">AI akan menulis artikel lengkap standar E-E-A-T Google.</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Topik Utama</label>
+                        <input type="text" id="article-topic" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none" placeholder="Contoh: 7 Tempat Makan Keluarga di Batu yang Murah">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Keyword Target (Opsional)</label>
+                        <input type="text" id="article-keywords" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none" placeholder="kuliner batu, wisata keluarga, dekat alun-alun">
+                    </div>
+                    <button id="btn-article-gen" onclick="generateSEOArticle()" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i> Tulis Artikel SEO Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="article-gen-loading" class="hidden mt-8 text-center py-10">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mx-auto mb-4"></div>
+                <p class="text-green-600 font-bold animate-pulse">Sedang meriset & menulis (± 30 detik)...</p>
+            </div>
+
+            <!-- Result Preview -->
+            <div id="article-gen-result" class="hidden bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden slide-in">
+                <div class="bg-gray-50 p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-700">Preview Artikel</h3>
+                    <button onclick="saveGeneratedArticleToDraft()" class="bg-blue-600 text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> Simpan & Edit
+                    </button>
+                </div>
+                <div class="p-8 prose max-w-none">
+                    <h1 id="preview-title" class="text-2xl font-bold mb-4 text-gray-900"></h1>
+                    <div id="preview-content" class="text-gray-700 leading-relaxed"></div>
+                </div>
+            </div>
         </main>
     </div>
     `;
@@ -1455,7 +1625,12 @@ function getAdminCRMHTML() {
                                 <div draggable="true" ondragstart="drag(event, ${booking.id})" class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 cursor-move hover:shadow-md transition-all group relative">
                                     <div class="flex justify-between items-start mb-1">
                                         <span class="text-[10px] text-gray-400 font-mono">${booking.createdAt}</span>
-                                        <button onclick="if(confirm('Hapus data ini?')) { bookingsData = bookingsData.filter(b => b.id != ${booking.id}); saveBookingsToStorage(); }" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-opacity"><i data-lucide="trash" class="w-3 h-3"></i></button>
+                                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            ${booking.status !== 'done' ? `
+                                            <button onclick="acceptBooking(${booking.id})" class="text-green-500 hover:text-green-600 transition-colors" title="Terima / Lanjut Tahap"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i></button>
+                                            ` : ''}
+                                            <button onclick="deleteBooking(${booking.id})" class="text-red-400 hover:text-red-600 transition-colors" title="Hapus"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
+                                        </div>
                                     </div>
                                     <h4 class="font-bold text-gray-800 text-sm mb-0.5">${booking.customerName}</h4>
                                     <div class="text-xs text-primary mb-2 font-medium">${booking.villaName}</div>
@@ -1546,6 +1721,8 @@ function renderApp() {
         appDiv.innerHTML = getAdminCRMHTML();
     } else if (currentPage === 'admin-generator') {
         appDiv.innerHTML = getAdminGeneratorHTML();
+    } else if (currentPage === 'admin-article-generator') {
+        appDiv.innerHTML = getAdminArticleGeneratorHTML();
     } else if (currentPage === 'admin-calendar') {
         appDiv.innerHTML = getAdminCalendarHTML();
     } else if (currentPage === 'admin-training') {
