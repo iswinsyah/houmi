@@ -965,11 +965,11 @@ function getHomeHTML() {
     <div class="pb-20 sm:pb-8 font-body">
         <header class="sticky top-0 z-20 bg-primary shadow-lg py-4 px-4">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
-                <div class="flex items-center gap-3">
-                    <img src="https://houmi.izzahgroup.com/uploads/1773679372_houmi_logo.png" alt="Houmi Logo" class="w-10 h-10 object-contain">
+                <div class="flex items-center gap-4">
+                    <img src="https://houmi.izzahgroup.com/uploads/1773679372_houmi_logo.png" alt="Houmi Logo" class="w-14 h-14 object-contain">
                     <div>
-                        <h1 class="text-2xl font-brand font-bold text-secondary leading-none">Houmi</h1>
-                        <p class="text-[10px] font-body text-secondary/80 -mt-1">It's Family Time</p>
+                        <h1 class="text-3xl font-brand font-bold text-secondary leading-none">Houmi</h1>
+                        <p class="text-xs font-body text-secondary/80">It's Family Time</p>
                     </div>
                 </div>
                 <div class="flex gap-4 items-center text-secondary">
