@@ -272,7 +272,12 @@ async function generateSEOArticle() {
         2. Trust: Gunakan nada bicara profesional namun ramah (Human Touch).
         3. Soft Selling: Sisipkan rekomendasi menginap di Houmi Villa secara natural di tengah/akhir.
         
-        FORMAT OUTPUT (Wajib JSON):
+        INSTRUKSI KHUSUS (PENTING):
+        - KELUARKAN HANYA JSON MURNI.
+        - JANGAN ada teks pembuka seperti "Tentu", "Berikut hasilnya", dll.
+        - JANGAN gunakan markdown block.
+        
+        FORMAT JSON TARGET:
         {
             "title": "Judul Clickbait & SEO Friendly (H1)",
             "content": "Isi artikel lengkap dalam format HTML (gunakan tag <p>, <h2>, <ul>, <li>). Minimal 400 kata."
@@ -286,9 +291,21 @@ async function generateSEOArticle() {
         });
 
         const data = await response.json();
+        
+        if (!data.candidates || !data.candidates[0].content) {
+            throw new Error("AI tidak memberikan respon valid. Cek kuota/safety settings.");
+        }
+
         let aiText = data.candidates[0].content.parts[0].text;
-        // Bersihkan markdown block jika ada
-        aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        // PEMBERSIH RESPON AI: Ambil hanya teks di antara kurung kurawal pertama { dan terakhir }
+        aiText = aiText.replace(/```json/g, '').replace(/```/g, '');
+        const firstBrace = aiText.indexOf('{');
+        const lastBrace = aiText.lastIndexOf('}');
+        
+        if (firstBrace !== -1 && lastBrace !== -1) {
+            aiText = aiText.substring(firstBrace, lastBrace + 1);
+        }
         
         generatedArticleCache = JSON.parse(aiText);
         
@@ -964,6 +981,7 @@ function getHomeHTML() {
     return `
     <div class="pb-20 sm:pb-8 font-body">
         <header class="sticky top-0 z-20 bg-primary shadow-lg py-4 px-4">
+        <header class="sticky top-0 z-20 bg-primary shadow-2xl py-4 px-4">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
                 <div class="flex items-center gap-4">
                     <img src="https://houmi.izzahgroup.com/uploads/1773679372_houmi_logo.png" alt="Houmi Logo" class="w-14 h-14 object-contain">
