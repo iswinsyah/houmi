@@ -1099,6 +1099,9 @@ function getAdminDashboardHTML() {
                     <button onclick="navigateTo('admin-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
                         <i data-lucide="brain-circuit" class="w-5 h-5 text-secondary"></i> AI Buyer Persona
                     </button>
+                    <button onclick="navigateTo('admin-calendar')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+                        <i data-lucide="calendar-check" class="w-5 h-5 text-secondary"></i> Kalender Konten
+                    </button>
                     <button onclick="navigateTo('admin-media')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
                         <i data-lucide="image" class="w-5 h-5 text-secondary"></i> Media Library
                     </button>
@@ -1238,21 +1241,31 @@ function getAdminGeneratorHTML() {
 
             <!-- Result Area -->
             <div id="persona-result" class="hidden mt-8 bg-white p-8 rounded-2xl shadow-lg border border-gray-100 slide-in text-left"></div>
-            
-            <!-- Separator -->
-            <hr class="my-12 border-gray-200">
+        </main>
+    </div>
+    `;
+}
 
-            <!-- Content Calendar Section -->
+function getAdminCalendarHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="calendar-check" class="w-6 h-6 text-purple-600"></i> Kalender Konten
+            </h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-6">
             <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center">
                 <div class="bg-purple-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-purple-600">
-                    <i data-lucide="calendar-check" class="w-8 h-8"></i>
+                    <i data-lucide="wand-2" class="w-8 h-8"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Generator Kalender Konten</h2>
                 <p class="text-gray-500 max-w-lg mx-auto mb-8">
                     Otomatis buat jadwal posting Sosmed & Blog SEO selama 1 bulan ke depan yang <strong>relevan</strong> dengan tren tamu saat ini.
                 </p>
                 <button id="btn-calendar" onclick="generateContentCalendar()" class="bg-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-700 shadow-lg transition-all flex items-center gap-2 mx-auto">
-                    <i data-lucide="wand-2" class="w-5 h-5"></i> Generate Kalender 1 Bulan
+                    <i data-lucide="sparkles" class="w-5 h-5"></i> Generate Kalender 1 Bulan
                 </button>
             </div>
 
@@ -1533,6 +1546,8 @@ function renderApp() {
         appDiv.innerHTML = getAdminCRMHTML();
     } else if (currentPage === 'admin-generator') {
         appDiv.innerHTML = getAdminGeneratorHTML();
+    } else if (currentPage === 'admin-calendar') {
+        appDiv.innerHTML = getAdminCalendarHTML();
     } else if (currentPage === 'admin-training') {
         appDiv.innerHTML = getAdminTrainingHTML();
     } else if (currentPage === 'admin-articles') {
