@@ -239,6 +239,100 @@ async function generateBuyerPersona() {
     }
 }
 
+// --- CONTENT CALENDAR GENERATOR ---
+async function generateContentCalendar() {
+    const btn = document.getElementById('btn-calendar');
+    const resultArea = document.getElementById('calendar-result');
+    const loadingArea = document.getElementById('calendar-loading');
+    
+    if (bookingsData.length === 0) {
+        alert("Belum ada data booking di CRM untuk dianalisa.");
+        return;
+    }
+
+    if (GAS_API_URL === "PASTE_URL_WEB_APP_GOOGLE_SCRIPT_DISINI" || GAS_API_URL === "") {
+        alert("URL Google Apps Script belum dipasang!");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    resultArea.classList.add('hidden');
+    loadingArea.classList.remove('hidden');
+
+    try {
+        const dataSummary = bookingsData.map((b, index) => 
+            `${index+1}. Tamu: ${b.customerName}, Asal: ${b.city}, Tujuan: ${b.purpose}, Jml: ${b.pax}, Villa: ${b.villaName}`
+        ).join('\n');
+
+        const prompt = `
+        Bertindaklah sebagai Content Strategist Expert. Buatkan Kalender Konten 1 Bulan (4 Minggu) untuk Houmi Villa.
+        
+        DATA TAMU REAL (Gunakan untuk relevansi konten):
+        ${dataSummary}
+        
+        TUGAS:
+        Buat tabel HTML (gunakan class Tailwind: w-full text-left border border-collapse, th bg-gray-100 p-2, td border p-2 text-sm) dengan kolom:
+        1. Minggu Ke
+        2. Tema Mingguan (Misal: Healing, Family, Promo)
+        3. Ide Konten Instagram/TikTok (Visual + Hook Singkat)
+        4. Judul Artikel SEO Website (Target keyword relevan)
+        `;
+
+        const response = await fetch(GAS_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt }) 
+        });
+
+        const data = await response.json();
+        let aiText = data.candidates[0].content.parts[0].text;
+        aiText = aiText.replace(/```html/g, '').replace(/```/g, '');
+
+        resultArea.innerHTML = aiText;
+        resultArea.classList.remove('hidden');
+
+    } catch (error) {
+        alert("Gagal: " + error.message);
+    } finally {
+        loadingArea.classList.add('hidden');
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+}
+
+// --- AI TRAINING FUNCTIONS ---
+async function saveAIPrompt(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = form.querySelector('button');
+    const newPrompt = form.prompt.value;
+
+    btn.disabled = true;
+    btn.innerText = "Menyimpan ke Server AI...";
+
+    try {
+        // Kirim prompt baru ke GAS untuk disimpan di Script Properties
+        // Menggunakan fetch ke URL GAS
+        const response = await fetch(GAS_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ 
+                action: "update_prompt", 
+                system_prompt: newPrompt 
+            }) 
+        });
+
+        const result = await response.text();
+        alert("Berhasil! Pengetahuan AI telah diperbarui.\nRespon Server: " + result);
+    } catch (err) {
+        alert("Gagal menyimpan: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Simpan Pengetahuan Baru";
+    }
+}
+
 // --- CALENDAR FUNCTIONS (NEW) ---
 function changeCalendarMonth(offset) {
     calendarCursor.setMonth(calendarCursor.getMonth() + offset);
