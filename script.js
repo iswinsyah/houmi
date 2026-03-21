@@ -1144,6 +1144,30 @@ function getAdminGeneratorHTML() {
 
             <!-- Result Area -->
             <div id="persona-result" class="hidden mt-8 bg-white p-8 rounded-2xl shadow-lg border border-gray-100 slide-in text-left"></div>
+            
+            <!-- Separator -->
+            <hr class="my-12 border-gray-200">
+
+            <!-- Content Calendar Section -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center">
+                <div class="bg-purple-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-purple-600">
+                    <i data-lucide="calendar-check" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Generator Kalender Konten</h2>
+                <p class="text-gray-500 max-w-lg mx-auto mb-8">
+                    Otomatis buat jadwal posting Sosmed & Blog SEO selama 1 bulan ke depan yang <strong>relevan</strong> dengan tren tamu saat ini.
+                </p>
+                <button id="btn-calendar" onclick="generateContentCalendar()" class="bg-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-700 shadow-lg transition-all flex items-center gap-2 mx-auto">
+                    <i data-lucide="wand-2" class="w-5 h-5"></i> Generate Kalender 1 Bulan
+                </button>
+            </div>
+
+            <!-- Calendar Result Area -->
+            <div id="calendar-loading" class="hidden mt-8 text-center py-10">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                <p class="text-purple-600 font-bold animate-pulse">Sedang meracik strategi konten...</p>
+            </div>
+            <div id="calendar-result" class="hidden mt-8 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 slide-in text-left overflow-x-auto"></div>
         </main>
     </div>
     `;
