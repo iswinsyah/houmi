@@ -1777,5 +1777,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("Houmi App v1.2 - White Background Fix Loaded 🚀");
     renderApp();
 });
