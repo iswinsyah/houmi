@@ -1,9 +1,12 @@
-# Abaikan file konfigurasi rahasia
-config.php
+# Folder Upload (Jangan di-upload ke GitHub karena isinya file user)
+/uploads/
 
-# Abaikan folder upload (karena isinya gambar user, berat kalau masuk git)
-uploads/
-
-# File sistem
+# System Files (Mac/Windows)
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.log

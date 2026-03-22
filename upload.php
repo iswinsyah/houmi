@@ -22,6 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $target_file = $target_dir . time() . "_" . $file_name;
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
+        // 3.1 Cek Ukuran File (Maksimal 5MB)
+        if ($_FILES["mediaFile"]["size"] > 5000000) {
+            echo json_encode(["success" => false, "message" => "File terlalu besar (Maksimal 5MB)."]);
+            exit;
+        }
+
         // 4. Validasi Ekstensi File
         $allowed_extensions = array("jpg", "jpeg", "png", "gif", "mp4", "webp");
         if (!in_array($imageFileType, $allowed_extensions)) {

@@ -296,7 +296,12 @@ async function generateSEOArticle() {
             throw new Error("AI tidak memberikan respon valid. Cek kuota/safety settings.");
         }
 
-        let aiText = data.candidates[0].content.parts[0].text;
+        let aiText;
+        try {
+            aiText = data.candidates[0].content.parts[0].text;
+        } catch (e) {
+             throw new Error("Format respons AI tidak dikenali.");
+        }
         
         // PEMBERSIH RESPON AI: Ambil hanya teks di antara kurung kurawal pertama { dan terakhir }
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '');
@@ -305,6 +310,9 @@ async function generateSEOArticle() {
         
         if (firstBrace !== -1 && lastBrace !== -1) {
             aiText = aiText.substring(firstBrace, lastBrace + 1);
+        } else {
+            // Jika tidak ada kurung kurawal JSON, berarti AI menolak/curhat
+            throw new Error("AI menolak perintah. Respon: " + aiText.substring(0, 100));
         }
         
         generatedArticleCache = JSON.parse(aiText);
@@ -492,7 +500,10 @@ function getCalendarHTML(villaId) {
     for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
         const booked = isDateBooked(villaId, dateStr);
-        const isPast = new Date(dateStr) < new Date().setHours(0,0,0,0);
+        
+        // Fix: Gunakan konstruktor lokal (year, month, date) agar konsisten dengan waktu lokal
+        // new Date(dateStr) dianggap UTC, bisa menyebabkan bug "hari ini dianggap masa lalu" di zona waktu tertentu
+        const isPast = new Date(year, month, d) < new Date().setHours(0,0,0,0);
         
         let classes = "py-1 rounded cursor-default ";
         if (booked) classes += "bg-red-100 text-red-600 line-through decoration-red-600 font-bold";
@@ -980,7 +991,6 @@ function renderVillaCards() {
 function getHomeHTML() {
     return `
     <div class="pb-20 sm:pb-8 font-body">
-        <header class="sticky top-0 z-20 bg-primary shadow-lg py-4 px-4">
         <header class="sticky top-0 z-20 bg-primary shadow-2xl py-4 px-4">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
                 <div class="flex items-center gap-4">
