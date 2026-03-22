@@ -5,6 +5,9 @@
 /* Area aman untuk tombol navigasi bawah di HP modern (iPhone dll) */
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
 
+/* PAKSA BACKGROUND PUTIH (Override Tailwind jika cache nyangkut) */
+body { background-color: #ffffff !important; }
+
 /* Menghilangkan efek highlight biru saat disentuh di HP */
 body { -webkit-tap-highlight-color: transparent; }
 

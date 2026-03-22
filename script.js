@@ -990,7 +990,7 @@ function renderVillaCards() {
 
 function getHomeHTML() {
     return `
-    <div class="pb-20 sm:pb-8 font-body">
+    <div class="pb-20 sm:pb-8 font-body bg-white min-h-screen">
         <header class="sticky top-0 z-20 bg-primary shadow-2xl py-4 px-4">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
                 <div class="flex items-center gap-4">
