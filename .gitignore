@@ -10,3 +10,5 @@ desktop.ini
 .vscode/
 .idea/
 *.log
+node_modules/
+.env
