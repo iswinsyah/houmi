@@ -1,4 +1,4 @@
-console.log("🚀 HOUMI.JS v5.2 (URL Updated) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v5.3 (HTML Fix) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -1953,10 +1953,10 @@ function renderApp() {
 // Pastikan renderApp dipanggil bahkan jika event DOMContentLoaded sudah lewat
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log("Houmi App v5.2 - Init via EventListener 🚀");
+        console.log("Houmi App v5.3 - Init via EventListener 🚀");
         renderApp();
     });
 } else {
-    console.log("Houmi App v5.2 - Init Direct (DOM Ready) ⚡");
+    console.log("Houmi App v5.3 - Init Direct (DOM Ready) ⚡");
     renderApp();
 }
