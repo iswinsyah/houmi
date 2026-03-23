@@ -929,7 +929,7 @@ function showBookingModal(villaName, villaId) {
                         </div>
                     </div>
                     <button type="submit" class="w-full bg-accent hover:bg-accent/90 text-white font-bold py-3 rounded-xl transition-colors shadow-lg">
-                        Pesan & Masuk CRM
+                        Pesan Sekarang
                     </button>
                 </form>
             </div>
@@ -1925,6 +1925,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.8 - Update Rekening BSI 💳");
+    console.log("Houmi App v1.9 - Button Label Update 🏷️");
     renderApp();
 });
