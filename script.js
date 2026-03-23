@@ -1248,6 +1248,22 @@ function getDetailHTML(villa) {
                 </div>
             </div>
             <hr class="border-gray-100 mb-6" />
+            
+            <!-- BAGIAN GALERI FOTO (GRID) -->
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5 text-primary"></i> Galeri Foto
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                    ${villa.images.map((img, idx) => `
+                        <div class="aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden relative shadow-sm group">
+                             <img src="${img}" alt="${villa.name} ${idx + 1}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <hr class="border-gray-100 mb-6" />
+
             <div class="mb-6">
                 <h2 class="text-lg font-bold text-gray-800 mb-1 flex items-center gap-2">
                     <i data-lucide="calendar-days" class="w-5 h-5 text-primary"></i> Cek Ketersediaan
