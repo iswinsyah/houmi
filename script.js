@@ -252,14 +252,10 @@ async function generateBuyerPersona() {
         `;
 
         // 2. Kirim ke Google Apps Script (GAS)
-        // UBAH CARA KIRIM: Gunakan URLSearchParams (Form Data) agar lebih stabil diterima Google
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" }, // 'text/plain' mencegah preflight CORS, tapi isi tetap JSON string
+            body: JSON.stringify({ prompt: prompt })
         });
 
         const responseText = await response.text();
@@ -345,13 +341,10 @@ async function generateSEOArticle() {
         }
         `;
 
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt })
         });
 
         const responseText = await response.text();
@@ -469,13 +462,10 @@ async function generateContentCalendar() {
         4. Judul Artikel SEO Website (Target keyword relevan)
         `;
 
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt })
         });
 
         const data = await response.json();
@@ -506,14 +496,13 @@ async function saveAIPrompt(e) {
 
     try {
         // Kirim prompt baru ke GAS untuk disimpan di Script Properties
-        const payload = new URLSearchParams();
-        payload.append('action', 'update_prompt');
-        payload.append('system_prompt', newPrompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ 
+                action: "update_prompt", 
+                system_prompt: newPrompt 
+            })
         });
 
         const result = await response.text();
@@ -1969,6 +1958,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.20 - Safe JSON Parsing 🛡️");
+    console.log("Houmi App v1.21 - JSON via TextPlain 🚀");
     renderApp();
 });
