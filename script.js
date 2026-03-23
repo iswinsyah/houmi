@@ -120,6 +120,43 @@ function saveBookingsToStorage() {
     renderApp();
 }
 
+// --- FITUR SYNC SERVER (SOLUSI BEDA DEVICE) ---
+async function syncMediaFromServer() {
+    try {
+        const response = await fetch('get_files.php');
+        if (!response.ok) return; // Jika file php belum ada/error, abaikan
+
+        const serverFiles = await response.json();
+        
+        // Gabungkan data server dengan data lokal
+        // Kita pakai URL sebagai kunci unik
+        let hasNewData = false;
+        
+        serverFiles.forEach(serverFile => {
+            // Cek apakah file ini sudah ada di mediaData lokal
+            const exists = mediaData.some(local => local.url === serverFile.url);
+            
+            if (!exists) {
+                // Jika belum ada, tambahkan ke mediaData
+                mediaData.unshift({
+                    id: Date.now() + Math.random(), // ID acak
+                    type: serverFile.type,
+                    name: serverFile.name, // Gunakan nama file asli sebagai nama default
+                    url: serverFile.url
+                });
+                hasNewData = true;
+            }
+        });
+
+        if (hasNewData) {
+            saveMediaToStorage(); // Simpan update ke localStorage laptop
+            console.log("Media Library disinkronisasi dengan Server!");
+        }
+    } catch (e) {
+        console.log("Gagal sync media:", e);
+    }
+}
+
 function getCategories() {
     const cats = new Set(appData.map(v => v.category));
     return ["Semua", ...Array.from(cats)];
@@ -1854,6 +1891,7 @@ function renderApp() {
     } else if (currentPage === 'admin-article-edit') {
         appDiv.innerHTML = getArticleEditorHTML();
     } else if (currentPage === 'admin-media') {
+        syncMediaFromServer(); // <--- TRIGGER SYNC SAAT BUKA HALAMAN MEDIA
         appDiv.innerHTML = getMediaLibraryHTML();
     } else if (currentPage === 'admin-edit') {
         appDiv.innerHTML = getEditorHTML();
@@ -1871,6 +1909,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.6 - 10 Image Slots 🖼️");
+    console.log("Houmi App v1.7 - Server Sync 🔄");
     renderApp();
 });
