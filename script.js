@@ -988,9 +988,47 @@ function renderVillaCards() {
     }).join('');
 }
 
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    if (!menu || !overlay) return;
+
+    if (menu.classList.contains('translate-x-full')) {
+        menu.classList.remove('translate-x-full');
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Kunci scroll body saat menu terbuka
+    } else {
+        menu.classList.add('translate-x-full');
+        overlay.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+}
+
 function getHomeHTML() {
     return `
-    <div class="pb-20 sm:pb-8 font-body bg-white min-h-screen">
+    <div class="pb-20 sm:pb-8 font-body bg-white min-h-screen relative overflow-x-hidden">
+        
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity backdrop-blur-sm"></div>
+
+        <!-- Mobile Menu Drawer (Hamburger Content) -->
+        <div id="mobile-menu" class="fixed inset-y-0 right-0 w-[75%] max-w-xs bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col font-body">
+            <div class="p-5 flex justify-between items-center border-b border-gray-100 bg-primary text-white">
+                <span class="font-brand font-bold text-xl">Menu</span>
+                <button onclick="toggleMobileMenu()" class="hover:bg-white/20 p-1 rounded-full transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <button onclick="toggleMobileMenu(); navigateTo('home')" class="flex items-center gap-3 text-gray-700 hover:bg-gray-50 hover:text-primary w-full text-left p-3 rounded-xl transition-all"><i data-lucide="home" class="w-5 h-5 text-gray-400"></i> <span class="font-bold">Beranda</span></button>
+                <button onclick="toggleMobileMenu(); navigateTo('admin-dashboard')" class="flex items-center gap-3 text-gray-700 hover:bg-gray-50 hover:text-primary w-full text-left p-3 rounded-xl transition-all"><i data-lucide="settings" class="w-5 h-5 text-gray-400"></i> <span class="font-bold">Admin Panel</span></button>
+                <button onclick="toggleMobileMenu()" class="flex items-center gap-3 text-gray-700 hover:bg-gray-50 hover:text-primary w-full text-left p-3 rounded-xl transition-all"><i data-lucide="heart" class="w-5 h-5 text-gray-400"></i> <span class="font-bold">Favorit Saya</span></button>
+            </nav>
+            <div class="p-4 border-t border-gray-100 bg-gray-50">
+                <button class="bg-accent text-white w-full py-3 rounded-xl font-bold shadow-lg hover:bg-accent/90 transition-transform active:scale-95 flex justify-center items-center gap-2"><i data-lucide="log-in" class="w-4 h-4"></i> Masuk / Daftar</button>
+            </div>
+        </div>
+
         <header class="sticky top-0 z-20 bg-primary shadow-2xl py-4 px-4">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
                 <div class="flex items-center gap-4">
@@ -1000,13 +1038,19 @@ function getHomeHTML() {
                         <p class="text-xs font-body text-secondary/80">It's Family Time</p>
                     </div>
                 </div>
-                <div class="flex gap-4 items-center text-secondary">
+                <!-- Menu Desktop (Hidden di HP) -->
+                <div class="hidden sm:flex gap-4 items-center text-secondary">
                     <button onclick="navigateTo('admin-dashboard')" class="hover:text-accent transition-colors" title="Panel Admin">
                         <i data-lucide="settings" class="w-6 h-6"></i>
                     </button>
                     <i data-lucide="heart" class="w-6 h-6 cursor-pointer hover:text-accent transition-colors"></i>
                     <button class="bg-accent text-white px-4 py-1.5 rounded-md text-sm font-bold shadow-sm hover:bg-accent/90 transition-colors">Masuk</button>
                 </div>
+                
+                <!-- Tombol Hamburger (Hanya muncul di HP) -->
+                <button onclick="toggleMobileMenu()" class="sm:hidden text-secondary p-1 hover:bg-white/10 rounded-lg transition-colors">
+                    <i data-lucide="menu" class="w-8 h-8"></i>
+                </button>
             </div>
             <div class="max-w-5xl mx-auto mt-4">
                 <div class="bg-white rounded-xl p-3 flex items-center shadow-inner">
@@ -1059,20 +1103,6 @@ function getHomeHTML() {
             </div>
         </main>
 
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe pt-2 px-6 flex justify-between sm:hidden z-20 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
-                    <button class="flex flex-col items-center p-2 text-primary">
-                <i data-lucide="search" class="w-6 h-6"></i>
-                <span class="text-[10px] mt-1 font-bold">Cari</span>
-            </button>
-            <button onclick="navigateTo('admin-dashboard')" class="flex flex-col items-center p-2 text-gray-400 hover:text-gray-800 transition">
-                <i data-lucide="settings" class="w-6 h-6"></i>
-                <span class="text-[10px] mt-1 font-medium">Admin</span>
-            </button>
-            <button class="flex flex-col items-center p-2 text-gray-400 hover:text-gray-800 transition">
-                <i data-lucide="user" class="w-6 h-6"></i>
-                <span class="text-[10px] mt-1 font-medium">Akun</span>
-            </button>
-        </div>
         ${getWhatsAppFloatingButton()}
     </div>
     `;
@@ -1777,6 +1807,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.3 - Force Update 🚀");
+    console.log("Houmi App v1.4 - Hamburger Menu 🍔");
     renderApp();
 });
