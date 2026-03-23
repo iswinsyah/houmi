@@ -174,7 +174,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 // PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxcqron0B5ZKpAH3mIiw2sWVYwki1jJkha62hxKgf8FxUFdSegRMO3bUM3iP13NOH0/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwKhbf0doH9ue1Gya9ubLU6ZqrLYM4HkwtTmlGy-exkaWJe3wLTAC3HUR5h2w7fg1Q/exec";
 const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -254,7 +254,6 @@ async function generateBuyerPersona() {
         // 2. Kirim ke Google Apps Script (GAS)
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" }, // GAS butuh header ini agar dianggap text/plain kadang-kadang, tapi kita coba standard json
             headers: { "Content-Type": "text/plain" }, // Ubah ke text/plain agar lebih stabil (menghindari preflight CORS)
             body: JSON.stringify({ prompt: prompt }) 
         });
@@ -278,7 +277,11 @@ async function generateBuyerPersona() {
         }
 
     } catch (error) {
-        alert("Gagal Analisa: " + error.message);
+        if (error.message.includes("Failed to fetch")) {
+            alert("⛔ BLOKIR AKSES GOOGLE!\n\nMasalah: Setting 'Who has access' di Google Script masih 'Only Me'.\nSolusi: Buka Deploy > Manage Deployments > Ubah ke 'Anyone' (Siapa Saja).");
+        } else {
+            alert("Gagal Analisa: " + error.message);
+        }
         console.error(error);
     } finally {
         loadingArea.classList.add('hidden');
@@ -355,14 +358,6 @@ async function generateSEOArticle() {
             throw new Error("Format respons AI tidak dikenali/kosong.");
         }
         
-        // CEK PESAN ERROR SPESIFIK DARI BACKEND
-        // Kita tangkap semua jenis error yang mungkin dikirim server
-        if (aiText.includes("Maaf") || aiText.includes("Error") || aiText.includes("Exception") || aiText.includes("Access Not Configured")) {
-             // Tampilkan pesan error lengkap di Alert agar Bos bisa baca detailnya
-             alert("⚠️ DIAGNOSA ERROR GOOGLE:\n" + aiText + "\n\nSOLUSI: Cek API Key atau 'Generative Language API' di Google Cloud Console.");
-             throw new Error("Backend Error: " + aiText);
-        }
-
         // PEMBERSIH RESPON AI: Ambil hanya teks di antara kurung kurawal pertama { dan terakhir }
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '');
         const firstBrace = aiText.indexOf('{');
@@ -370,16 +365,12 @@ async function generateSEOArticle() {
         
         if (firstBrace !== -1 && lastBrace !== -1) {
             aiText = aiText.substring(firstBrace, lastBrace + 1);
-            generatedArticleCache = JSON.parse(aiText);
         } else {
-            // FALLBACK: Jika AI menjawab tapi bukan format JSON (biasanya teks biasa)
-            console.warn("Respon bukan JSON murni, mencoba menampilkan apa adanya.");
-            generatedArticleCache = {
-                title: "Draft Artikel (Format Text)",
-                content: aiText.replace(/\n/g, '<br>') // Ubah baris baru jadi HTML break
-            };
+            // Jika tidak ada kurung kurawal JSON, berarti AI menolak/curhat
+            throw new Error("AI menolak perintah. Respon: " + aiText.substring(0, 100));
         }
         
+        generatedArticleCache = JSON.parse(aiText);
         
         // Render Preview
         document.getElementById('preview-title').innerText = generatedArticleCache.title;
@@ -387,7 +378,11 @@ async function generateSEOArticle() {
         
         resultArea.classList.remove('hidden');
     } catch (error) {
-        alert("Gagal generate (Coba topik lain/pendekkan keyword): " + error.message);
+        if (error.message.includes("Failed to fetch")) {
+            alert("⛔ BLOKIR AKSES GOOGLE!\n\nMasalah: Setting 'Who has access' di Google Script masih 'Only Me'.\nSolusi: Buka Deploy > Manage Deployments > Ubah ke 'Anyone' (Siapa Saja).");
+        } else {
+            alert("Gagal generate (Coba topik lain/pendekkan keyword): " + error.message);
+        }
         console.error(error);
     } finally {
         loadingArea.classList.add('hidden');
@@ -1952,6 +1947,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.17 - AI Debug Mode 🕵️‍♂️");
+    console.log("Houmi App v1.18 - CORS Guard 🛡️");
     renderApp();
 });
