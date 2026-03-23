@@ -262,7 +262,13 @@ async function generateBuyerPersona() {
             body: payload
         });
 
-        const data = await response.json();
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            throw new Error("Backend Error (Raw): " + responseText);
+        }
         
         // 3. Tampilkan Hasil
         let aiText;
@@ -274,7 +280,7 @@ async function generateBuyerPersona() {
             resultArea.classList.remove('hidden');
         } catch (e) {
              // Cek pesan error manual dari server
-             if (JSON.stringify(data).includes("Maaf")) {
+             if (responseText.includes("Maaf")) {
                  throw new Error("Google Script Gagal Kontak AI. Coba 'New Deploy' di GAS & Cek API Key.");
             }
             throw new Error("Format respons AI tidak valid.");
@@ -348,7 +354,13 @@ async function generateSEOArticle() {
             body: payload
         });
 
-        const data = await response.json();
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            throw new Error("Backend Error (Raw): " + responseText);
+        }
         
         if (!data.candidates || !data.candidates[0].content) {
             throw new Error("AI tidak memberikan respon valid. Cek kuota/safety settings.");
@@ -359,7 +371,7 @@ async function generateSEOArticle() {
             aiText = data.candidates[0].content.parts[0].text;
         } catch (e) {
             // Cek apakah server mengembalikan pesan error manual
-            if (JSON.stringify(data).includes("Maaf")) {
+            if (responseText.includes("Maaf")) {
                  throw new Error("Google Script Gagal Kontak AI. Coba 'New Deploy' di GAS & Cek API Key.");
             }
             throw new Error("Format respons AI tidak dikenali/kosong.");
@@ -1957,6 +1969,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.19 - Form Data Protocol 📨");
+    console.log("Houmi App v1.20 - Safe JSON Parsing 🛡️");
     renderApp();
 });
