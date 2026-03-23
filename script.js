@@ -252,15 +252,16 @@ async function generateBuyerPersona() {
         `;
 
         // 2. Kirim ke Google Apps Script (GAS)
-        // UBAH KE FORM DATA (STABIL & BADAK)
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" }, // Gunakan text/plain untuk menghindari Preflight CORS
+            body: JSON.stringify({ prompt: prompt })
         });
+
+        // DIAGNOSA HTTP STATUS: Cek apakah server Google menolak (404/500/401)
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status} ${response.statusText} (Cek 'Executions' di GAS)`);
+        }
 
         const responseText = await response.text();
         let data;
@@ -345,14 +346,15 @@ async function generateSEOArticle() {
         }
         `;
 
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt })
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status} ${response.statusText} (Cek 'Executions' di GAS)`);
+        }
 
         const responseText = await response.text();
         let data;
@@ -469,14 +471,15 @@ async function generateContentCalendar() {
         4. Judul Artikel SEO Website (Target keyword relevan)
         `;
 
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt })
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status} ${response.statusText} (Cek 'Executions' di GAS)`);
+        }
 
         const data = await response.json();
         let aiText = data.candidates[0].content.parts[0].text;
@@ -506,15 +509,18 @@ async function saveAIPrompt(e) {
 
     try {
         // Kirim prompt baru ke GAS untuk disimpan di Script Properties
-        const payload = new URLSearchParams();
-        payload.append('action', 'update_prompt');
-        payload.append('system_prompt', newPrompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ 
+                action: "update_prompt", 
+                system_prompt: newPrompt 
+            })
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status} ${response.statusText}`);
+        }
 
         const result = await response.text();
         alert("Berhasil! Pengetahuan AI telah diperbarui.\nRespon Server: " + result);
@@ -1969,6 +1975,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.23 - New GAS URL with Form Data Protocol 🔗");
+    console.log("Houmi App v1.25 - Text/Plain CORS Bypass 🛡️");
     renderApp();
 });
