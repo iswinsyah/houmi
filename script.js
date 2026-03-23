@@ -1788,6 +1788,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.29 - Article Generator Removed 🗑️");
+    console.log("Houmi App v2.0 - Clean & Fast (No Article Gen) 🚀");
     renderApp();
 });
