@@ -1,4 +1,4 @@
-console.log("🚀 HOUMI.JS v5.4 (Protocol Form Data) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v5.5 (JSON Payload Fix) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -257,14 +257,10 @@ async function generateSEOArticle() {
         }
         `;
 
-        // UBAH KE FORM DATA (Anti-Gagal Fetch)
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" }, // Gunakan text/plain agar tidak kena Preflight CORS
+            body: JSON.stringify({ prompt: prompt })   // Kirim JSON string (Bisa muat data besar)
         });
 
         if (!response.ok) throw new Error("HTTP Error: " + response.status);
@@ -365,13 +361,10 @@ async function generateBuyerPersona() {
         3. 💡 Rekomendasi Strategi: Saran konten medsos dan ide promo.
         `;
 
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt })
         });
 
         // DIAGNOSA HTTP STATUS: Cek apakah server Google menolak (404/500/401)
@@ -457,13 +450,10 @@ async function generateContentCalendar() {
         4. Judul Artikel SEO Website (Target keyword relevan)
         `;
 
-        const payload = new URLSearchParams();
-        payload.append('prompt', prompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt })
         });
 
         if (!response.ok) {
@@ -506,14 +496,13 @@ async function saveAIPrompt(e) {
 
     try {
         // Kirim prompt baru ke GAS untuk disimpan di Script Properties
-        const payload = new URLSearchParams();
-        payload.append('action', 'update_prompt');
-        payload.append('system_prompt', newPrompt);
-
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ 
+                action: 'update_prompt', 
+                system_prompt: newPrompt 
+            })
         });
 
         if (!response.ok) {
@@ -1964,10 +1953,10 @@ function renderApp() {
 // Pastikan renderApp dipanggil bahkan jika event DOMContentLoaded sudah lewat
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log("Houmi App v5.4 - Init via EventListener 🚀");
+        console.log("Houmi App v5.5 - Init via EventListener 🚀");
         renderApp();
     });
 } else {
-    console.log("Houmi App v5.4 - Init Direct (DOM Ready) ⚡");
+    console.log("Houmi App v5.5 - Init Direct (DOM Ready) ⚡");
     renderApp();
 }
