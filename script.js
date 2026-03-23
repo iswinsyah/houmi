@@ -174,7 +174,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 // PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwHvPfo9IYq0qleCn6Idz-w0Mq0B-NrbSK7o5SDBZCX4D9fPN5jsaDWc-t9hluBF9E/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx07bU-vq3wJto7VemwBqdXzbl0oiU22j9m2Ed82gS2DeFX_9S-nXdqx9fRbhJ9DSJe/exec";
 const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -1975,6 +1975,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.25 - Text/Plain CORS Bypass 🛡️");
+    console.log("Houmi App v1.27 - New GAS URL Updated 🔗");
     renderApp();
 });
