@@ -580,6 +580,13 @@ function openEditor(id = null) {
 function saveVillaData(e) {
     e.preventDefault();
     const form = e.target;
+
+    // Ambil data gambar dari 10 input terpisah
+    const collectedImages = [];
+    for (let i = 0; i < 10; i++) {
+        const imgUrl = form['image_' + i].value.trim();
+        if (imgUrl) collectedImages.push(imgUrl);
+    }
     
     const newVilla = {
         id: editingVillaId ? editingVillaId : Date.now(),
@@ -593,7 +600,7 @@ function saveVillaData(e) {
         verified: true,
         description: form.description.value,
         amenities: form.amenities.value.split(',').map(s => s.trim()),
-        images: form.images.value.split('\n').map(s => s.trim()).filter(s => s)
+        images: collectedImages
     };
 
     if (editingVillaId) {
@@ -1632,6 +1639,18 @@ function getEditorHTML() {
         name: '', location: '', price: '', oldPrice: '', category: 'Umum', 
         description: '', amenities: [], images: []
     };
+
+    // Generate 10 Input untuk Gambar
+    let imageInputsHTML = '<div class="space-y-3 bg-gray-50 p-4 rounded-lg border border-gray-200">';
+    for (let i = 0; i < 10; i++) {
+        const val = (villa.images && villa.images[i]) ? villa.images[i] : '';
+        imageInputsHTML += `
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">URL Gambar ${i + 1}</label>
+                <input type="text" name="image_${i}" value="${val}" class="w-full border p-2 rounded-lg text-sm bg-white focus:ring-1 focus:ring-primary outline-none" placeholder="https://...">
+            </div>`;
+    }
+    imageInputsHTML += '</div>';
     
     return ` 
     <div class="min-h-screen bg-gray-50 pb-20">
@@ -1673,10 +1692,10 @@ function getEditorHTML() {
                     <label class="block text-sm font-bold text-gray-700 mb-1">Fasilitas (Pisahkan dengan koma)</label>
                     <input type="text" name="amenities" value="${Array.isArray(villa.amenities) ? villa.amenities.join(', ') : ''}" class="w-full border p-2 rounded-lg" placeholder="WiFi, Kolam Renang, TV">
                 </div>
-                        <div> 
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Link Gambar (Satu per baris)</label>
-                    <textarea name="images" rows="4" class="w-full border p-2 rounded-lg font-mono text-xs" placeholder="https://...">${Array.isArray(villa.images) ? villa.images.join('\n') : ''}</textarea>
-                    <p class="text-[10px] text-gray-400 mt-1">Gunakan link gambar langsung (Unsplash/Google Photos)</p>
+                <div> 
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Galeri Foto (Maks 10)</label>
+                    ${imageInputsHTML}
+                    <p class="text-[10px] text-gray-400 mt-2">Tips: Gunakan "Media Library" untuk upload foto, lalu copy link-nya ke sini.</p>
                 </div>
                         <div class="pt-4"> 
                             <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary/90 shadow-lg">Simpan Data</button>
@@ -1852,6 +1871,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.5 - Admin Mobile Friendly 📱");
+    console.log("Houmi App v1.6 - 10 Image Slots 🖼️");
     renderApp();
 });
