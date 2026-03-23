@@ -337,7 +337,11 @@ async function generateSEOArticle() {
         try {
             aiText = data.candidates[0].content.parts[0].text;
         } catch (e) {
-             throw new Error("Format respons AI tidak dikenali.");
+            // Cek apakah server mengembalikan pesan error manual
+            if (JSON.stringify(data).includes("Maaf, AI sedang gangguan")) {
+                 throw new Error("API KEY Bermasalah! Cek 'Script Properties' di Google Apps Script Anda.");
+            }
+            throw new Error("Format respons AI tidak dikenali/kosong.");
         }
         
         // PEMBERSIH RESPON AI: Ambil hanya teks di antara kurung kurawal pertama { dan terakhir }
@@ -1925,6 +1929,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.9 - Button Label Update 🏷️");
+    console.log("Houmi App v1.10 - Debug AI Connection 🔧");
     renderApp();
 });
