@@ -1,4 +1,4 @@
-console.log("🚀 Script script.js v4.0 SUPER FIX berhasil dimuat!");
+console.log("🚀 HOUMI.JS v5.0 (New Identity) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -248,7 +248,7 @@ async function generateSEOArticle() {
         
         Panduan:
         1. Gaya Bahasa: Ramah, Informatif, Soft Selling (ajak menginap di Houmi).
-        2. Format Output: JSON MURNI (tanpa markdown ```json).
+        2. Format Output: JSON MURNI (tanpa markdown).
         
         STRUKTUR JSON TARGET:
         {
@@ -1965,10 +1965,10 @@ function renderApp() {
 // Pastikan renderApp dipanggil bahkan jika event DOMContentLoaded sudah lewat
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log("Houmi App v4.0 - Init via EventListener 🚀");
+        console.log("Houmi App v5.0 (Houmi.JS) - Init via EventListener 🚀");
         renderApp();
     });
 } else {
-    console.log("Houmi App v4.0 - Init Direct (DOM Ready) ⚡");
+    console.log("Houmi App v5.0 (Houmi.JS) - Init Direct (DOM Ready) ⚡");
     renderApp();
 }
