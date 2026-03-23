@@ -355,6 +355,11 @@ async function generateSEOArticle() {
             throw new Error("Format respons AI tidak dikenali/kosong.");
         }
         
+        // CEK PESAN ERROR SPESIFIK DARI BACKEND
+        if (aiText.includes("Maaf, AI sedang gangguan") || aiText.includes("API Key")) {
+             throw new Error("API KEY BELUM DIPASANG! Buka Google Apps Script > Project Settings > Script Properties > Masukkan 'GEMINI_API_KEY'.");
+        }
+
         // PEMBERSIH RESPON AI: Ambil hanya teks di antara kurung kurawal pertama { dan terakhir }
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '');
         const firstBrace = aiText.indexOf('{');
@@ -1940,6 +1945,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.13 - New AI URL Connected 🔗");
+    console.log("Houmi App v1.14 - API Key Detector 🕵️");
     renderApp();
 });
