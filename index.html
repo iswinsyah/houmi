@@ -48,8 +48,30 @@
 <body class="bg-white font-body text-dark antialiased overflow-x-hidden">
 
     <!-- Container Utama Aplikasi -->
-    <div id="app" class="w-full h-full min-h-screen relative"></div>
+    <div id="app" class="w-full h-full min-h-screen relative">
+        <!-- TAMPILAN LOADING AWAL (Supaya tidak blank putih) -->
+        <div class="flex flex-col items-center justify-center h-screen bg-gray-50 text-center p-6">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-green-800 mb-4"></div>
+            <h2 class="text-xl font-bold text-gray-800">Sedang Memuat Houmi...</h2>
+            <p class="text-sm text-gray-500 mt-2">Mohon tunggu sebentar.</p>
+            
+            <!-- Area ini akan muncul HANYA jika ada error -->
+            <div id="error-log" class="hidden mt-6 text-left bg-red-100 border border-red-300 text-red-700 p-4 rounded-lg text-xs font-mono w-full max-w-md overflow-auto">
+                <strong>⚠️ TERJADI ERROR:</strong><br>
+                <span id="error-msg"></span>
+            </div>
+        </div>
+    </div>
 
-    <script src="main-app.js?v=3" defer></script>
+    <!-- Script Penangkap Error (Munculkan error di layar biar ketahuan) -->
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            document.getElementById('error-log').classList.remove('hidden');
+            document.getElementById('error-msg').innerText += `\n${msg}\nLine: ${lineNo}`;
+            return false;
+        };
+    </script>
+
+    <script src="script.js?v=1" defer></script>
 </body>
 </html>
