@@ -174,7 +174,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 // PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwKhbf0doH9ue1Gya9ubLU6ZqrLYM4HkwtTmlGy-exkaWJe3wLTAC3HUR5h2w7fg1Q/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwHvPfo9IYq0qleCn6Idz-w0Mq0B-NrbSK7o5SDBZCX4D9fPN5jsaDWc-t9hluBF9E/exec";
 const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -252,10 +252,14 @@ async function generateBuyerPersona() {
         `;
 
         // 2. Kirim ke Google Apps Script (GAS)
+        // UBAH KE FORM DATA (STABIL & BADAK)
+        const payload = new URLSearchParams();
+        payload.append('prompt', prompt);
+
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "text/plain" }, // 'text/plain' mencegah preflight CORS, tapi isi tetap JSON string
-            body: JSON.stringify({ prompt: prompt })
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload
         });
 
         const responseText = await response.text();
@@ -341,10 +345,13 @@ async function generateSEOArticle() {
         }
         `;
 
+        const payload = new URLSearchParams();
+        payload.append('prompt', prompt);
+
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ prompt: prompt })
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload
         });
 
         const responseText = await response.text();
@@ -462,10 +469,13 @@ async function generateContentCalendar() {
         4. Judul Artikel SEO Website (Target keyword relevan)
         `;
 
+        const payload = new URLSearchParams();
+        payload.append('prompt', prompt);
+
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ prompt: prompt })
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload
         });
 
         const data = await response.json();
@@ -496,13 +506,14 @@ async function saveAIPrompt(e) {
 
     try {
         // Kirim prompt baru ke GAS untuk disimpan di Script Properties
+        const payload = new URLSearchParams();
+        payload.append('action', 'update_prompt');
+        payload.append('system_prompt', newPrompt);
+
         const response = await fetch(GAS_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ 
-                action: "update_prompt", 
-                system_prompt: newPrompt 
-            })
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload
         });
 
         const result = await response.text();
@@ -1958,6 +1969,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.21 - JSON via TextPlain 🚀");
+    console.log("Houmi App v1.23 - New GAS URL with Form Data Protocol 🔗");
     renderApp();
 });
