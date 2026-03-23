@@ -173,7 +173,8 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwKhbf0doH9ue1Gya9ubLU6ZqrLYM4HkwtTmlGy-exkaWJe3wLTAC3HUR5h2w7fg1Q/exec";
+// PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzNDFWjmkLm-JS0rICXPG6gqn4Tx_dBqP7yNgmBwjzt4F_WBhyHgoS4zt7n-URiLeI/exec";
 const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -254,20 +255,30 @@ async function generateBuyerPersona() {
         const response = await fetch(GAS_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" }, // GAS butuh header ini agar dianggap text/plain kadang-kadang, tapi kita coba standard json
+            headers: { "Content-Type": "text/plain" }, // Ubah ke text/plain agar lebih stabil (menghindari preflight CORS)
             body: JSON.stringify({ prompt: prompt }) 
         });
 
         const data = await response.json();
         
         // 3. Tampilkan Hasil
-        let aiText = data.candidates[0].content.parts[0].text;
-        aiText = aiText.replace(/```html/g, '').replace(/```/g, ''); // Bersihkan markdown
+        let aiText;
+        try {
+            aiText = data.candidates[0].content.parts[0].text;
+            aiText = aiText.replace(/```html/g, '').replace(/```/g, ''); // Bersihkan markdown
 
-        resultArea.innerHTML = aiText;
-        resultArea.classList.remove('hidden');
+            resultArea.innerHTML = aiText;
+            resultArea.classList.remove('hidden');
+        } catch (e) {
+             // Cek pesan error manual dari server
+             if (JSON.stringify(data).includes("Maaf")) {
+                 throw new Error("Google Script Gagal Kontak AI. Coba 'New Deploy' di GAS & Cek API Key.");
+            }
+            throw new Error("Format respons AI tidak valid.");
+        }
 
     } catch (error) {
-        alert("Gagal menghubungi AI: " + error.message);
+        alert("Gagal Analisa: " + error.message);
         console.error(error);
     } finally {
         loadingArea.classList.add('hidden');
@@ -338,8 +349,8 @@ async function generateSEOArticle() {
             aiText = data.candidates[0].content.parts[0].text;
         } catch (e) {
             // Cek apakah server mengembalikan pesan error manual
-            if (JSON.stringify(data).includes("Maaf, AI sedang gangguan")) {
-                 throw new Error("API KEY Bermasalah! Cek 'Script Properties' di Google Apps Script Anda.");
+            if (JSON.stringify(data).includes("Maaf")) {
+                 throw new Error("Google Script Gagal Kontak AI. Coba 'New Deploy' di GAS & Cek API Key.");
             }
             throw new Error("Format respons AI tidak dikenali/kosong.");
         }
@@ -1929,6 +1940,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.10 - Debug AI Connection 🔧");
+    console.log("Houmi App v1.13 - New AI URL Connected 🔗");
     renderApp();
 });
