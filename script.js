@@ -910,7 +910,7 @@ function showBookingModal(villaName, villaId) {
                             <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Konfirmasi Pembayaran</p>
                             
                             <div class="mb-3">
-                                <div class="text-xs text-gray-600 mb-1">Transfer ke: <span class="font-mono font-bold text-dark">BCA 123-456-7890 (Houmi)</span></div>
+                                <div class="text-xs text-gray-600 mb-1">Transfer ke: <span class="font-mono font-bold text-dark">BSI 7279764638 (an Sabeq)</span></div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-2 mb-3">
@@ -1925,6 +1925,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.7 - Server Sync 🔄");
+    console.log("Houmi App v1.8 - Update Rekening BSI 💳");
     renderApp();
 });
