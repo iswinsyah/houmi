@@ -1,4 +1,4 @@
-console.log("🚀 Script script.js berhasil dimuat! Fitur Lengkap Kembali.");
+console.log("🚀 Script script.js v2 Fixed berhasil dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -268,7 +268,17 @@ async function generateSEOArticle() {
 
         if (!response.ok) throw new Error("HTTP Error: " + response.status);
 
-        const data = await response.json();
+        // REVISI: Gunakan text() + JSON.parse() agar lebih aman dari SyntaxError dan bisa debug error HTML
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            throw new Error("Respon Server bukan JSON valid: " + responseText.substring(0, 100));
+        }
+
+        if (!data.candidates || !data.candidates[0].content) throw new Error("Format respons AI tidak sesuai/kosong.");
+
         let aiText = data.candidates[0].content.parts[0].text;
         // Bersihkan markdown jika AI bandel
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '');
