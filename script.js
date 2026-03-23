@@ -1788,6 +1788,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v2.0 - Clean & Fast (No Article Gen) 🚀");
+    console.log("Houmi App v2.1 - Cache Busted & Cleaned 🧹");
     renderApp();
 });
