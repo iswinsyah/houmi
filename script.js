@@ -356,8 +356,11 @@ async function generateSEOArticle() {
         }
         
         // CEK PESAN ERROR SPESIFIK DARI BACKEND
-        if (aiText.includes("Maaf, AI sedang gangguan") || aiText.includes("API Key")) {
-             throw new Error("API KEY BELUM DIPASANG! Buka Google Apps Script > Project Settings > Script Properties > Masukkan 'GEMINI_API_KEY'.");
+        // Kita tangkap semua jenis error yang mungkin dikirim server
+        if (aiText.includes("Maaf") || aiText.includes("Error") || aiText.includes("Exception") || aiText.includes("Access Not Configured")) {
+             // Tampilkan pesan error lengkap di Alert agar Bos bisa baca detailnya
+             alert("⚠️ DIAGNOSA ERROR GOOGLE:\n" + aiText + "\n\nSOLUSI: Cek API Key atau 'Generative Language API' di Google Cloud Console.");
+             throw new Error("Backend Error: " + aiText);
         }
 
         // PEMBERSIH RESPON AI: Ambil hanya teks di antara kurung kurawal pertama { dan terakhir }
@@ -367,12 +370,16 @@ async function generateSEOArticle() {
         
         if (firstBrace !== -1 && lastBrace !== -1) {
             aiText = aiText.substring(firstBrace, lastBrace + 1);
+            generatedArticleCache = JSON.parse(aiText);
         } else {
-            // Jika tidak ada kurung kurawal JSON, berarti AI menolak/curhat
-            throw new Error("AI menolak perintah. Respon: " + aiText.substring(0, 100));
+            // FALLBACK: Jika AI menjawab tapi bukan format JSON (biasanya teks biasa)
+            console.warn("Respon bukan JSON murni, mencoba menampilkan apa adanya.");
+            generatedArticleCache = {
+                title: "Draft Artikel (Format Text)",
+                content: aiText.replace(/\n/g, '<br>') // Ubah baris baru jadi HTML break
+            };
         }
         
-        generatedArticleCache = JSON.parse(aiText);
         
         // Render Preview
         document.getElementById('preview-title').innerText = generatedArticleCache.title;
@@ -1945,6 +1952,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.16 - New AI URL Updated 🔗");
+    console.log("Houmi App v1.17 - AI Debug Mode 🕵️‍♂️");
     renderApp();
 });
