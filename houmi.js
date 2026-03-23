@@ -1,4 +1,4 @@
-console.log("🚀 HOUMI.JS v5.1 (CORS Bypass Fix) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v5.2 (URL Updated) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -186,7 +186,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 // PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx07bU-vq3wJto7VemwBqdXzbl0oiU22j9m2Ed82gS2DeFX_9S-nXdqx9fRbhJ9DSJe/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEsDC1FJ38TVzbMoDekvmBy_79RCRwaVDQMg3xjWxA3bdII4vUnvm9dVtdlezznn7l/exec";
 const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -1953,10 +1953,10 @@ function renderApp() {
 // Pastikan renderApp dipanggil bahkan jika event DOMContentLoaded sudah lewat
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log("Houmi App v5.1 - Init via EventListener 🚀");
+        console.log("Houmi App v5.2 - Init via EventListener 🚀");
         renderApp();
     });
 } else {
-    console.log("Houmi App v5.1 - Init Direct (DOM Ready) ⚡");
+    console.log("Houmi App v5.2 - Init Direct (DOM Ready) ⚡");
     renderApp();
 }
