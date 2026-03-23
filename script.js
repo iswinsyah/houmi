@@ -1,4 +1,4 @@
-console.log("🚀 Script script.js v2 Fixed berhasil dimuat!");
+console.log("🚀 Script script.js v3 Final Fix berhasil dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -468,7 +468,15 @@ async function generateContentCalendar() {
             throw new Error(`HTTP Error! Status: ${response.status} ${response.statusText} (Cek 'Executions' di GAS)`);
         }
 
-        const data = await response.json();
+        // REVISI: Gunakan text() + JSON.parse() agar aman (Sama seperti generator artikel)
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            throw new Error("Respon Server bukan JSON valid: " + responseText.substring(0, 100));
+        }
+
         let aiText = data.candidates[0].content.parts[0].text;
         aiText = aiText.replace(/```html/g, '').replace(/```/g, '');
 
