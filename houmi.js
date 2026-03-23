@@ -1,4 +1,4 @@
-console.log("🚀 HOUMI.JS v5.5 (JSON Payload Fix) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v5.6 (API Key Diagnostic) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -299,7 +299,11 @@ async function generateSEOArticle() {
         
         resultArea.classList.remove('hidden');
     } catch (error) {
-        alert("Gagal generate: " + error.message);
+        if (error.message.includes("Failed to fetch")) {
+            alert("⛔ GAGAL KONEKSI!\n\nKemungkinan Penyebab:\n1. Nama Property di GAS salah (Harusnya: GEMINI_API_KEY).\n2. Lupa 'New Deployment' setelah edit.\n3. Koneksi internet tidak stabil.");
+        } else {
+            alert("Gagal generate: " + error.message);
+        }
     } finally {
         loadingArea.classList.add('hidden');
         btn.disabled = false;
@@ -398,7 +402,7 @@ async function generateBuyerPersona() {
 
     } catch (error) {
         if (error.message.includes("Failed to fetch")) {
-            alert("⛔ BLOKIR AKSES GOOGLE!\n\nMasalah: Setting 'Who has access' di Google Script masih 'Only Me'.\nSolusi: Buka Deploy > Manage Deployments > Ubah ke 'Anyone' (Siapa Saja).");
+            alert("⛔ GAGAL KONEKSI!\n\nCek Script Properties di GAS:\nPastikan nama property adalah 'GEMINI_API_KEY' (bukan API_GEMINI_KEY).");
         } else {
             alert("Gagal Analisa: " + error.message);
         }
@@ -476,7 +480,11 @@ async function generateContentCalendar() {
         resultArea.classList.remove('hidden');
 
     } catch (error) {
-        alert("Gagal: " + error.message);
+        if (error.message.includes("Failed to fetch")) {
+            alert("⛔ GAGAL KONEKSI!\n\nCek Script Properties di GAS:\nPastikan nama property adalah 'GEMINI_API_KEY'.");
+        } else {
+            alert("Gagal: " + error.message);
+        }
     } finally {
         loadingArea.classList.add('hidden');
         btn.disabled = false;
@@ -512,7 +520,11 @@ async function saveAIPrompt(e) {
         const result = await response.text();
         alert("Berhasil! Pengetahuan AI telah diperbarui.\nRespon Server: " + result);
     } catch (err) {
-        alert("Gagal menyimpan: " + err.message);
+        if (err.message.includes("Failed to fetch")) {
+            alert("⛔ GAGAL KONEKSI!\nCek apakah URL GAS sudah benar dan Deployment akses 'Anyone'.");
+        } else {
+            alert("Gagal menyimpan: " + err.message);
+        }
     } finally {
         btn.disabled = false;
         btn.innerText = "Simpan Pengetahuan Baru";
@@ -1953,10 +1965,10 @@ function renderApp() {
 // Pastikan renderApp dipanggil bahkan jika event DOMContentLoaded sudah lewat
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log("Houmi App v5.5 - Init via EventListener 🚀");
+        console.log("Houmi App v5.6 - Init via EventListener 🚀");
         renderApp();
     });
 } else {
-    console.log("Houmi App v5.5 - Init Direct (DOM Ready) ⚡");
+    console.log("Houmi App v5.6 - Init Direct (DOM Ready) ⚡");
     renderApp();
 }
