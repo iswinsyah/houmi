@@ -1004,6 +1004,49 @@ function toggleMobileMenu() {
     }
 }
 
+function toggleAdminMenu() {
+    const menu = document.getElementById('admin-mobile-menu');
+    const overlay = document.getElementById('admin-mobile-menu-overlay');
+    if (!menu || !overlay) return;
+
+    if (menu.classList.contains('-translate-x-full')) {
+        menu.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    } else {
+        menu.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+}
+
+function getAdminNavLinks(isMobile = false) {
+    const clickAction = isMobile ? "toggleAdminMenu()" : "";
+    return `
+    <button onclick="navigateTo('admin-crm'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="kanban-square" class="w-5 h-5 text-secondary"></i> CRM Pipeline
+    </button>
+    <button onclick="navigateTo('admin-generator'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="brain-circuit" class="w-5 h-5 text-secondary"></i> AI Buyer Persona
+    </button>
+    <button onclick="navigateTo('admin-calendar'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="calendar-check" class="w-5 h-5 text-secondary"></i> Kalender Konten
+    </button>
+    <button onclick="navigateTo('admin-media'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="image" class="w-5 h-5 text-secondary"></i> Media Library
+    </button>
+    <button onclick="navigateTo('admin-articles'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="book-open" class="w-5 h-5 text-secondary"></i> Artikel
+    </button>
+    <button onclick="navigateTo('admin-article-generator'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO
+    </button>
+    <button onclick="navigateTo('admin-training'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium bg-white/5">
+        <i data-lucide="bot" class="w-5 h-5 text-accent"></i> Training AI
+    </button>
+    `;
+}
+
 function getHomeHTML() {
     return `
     <div class="pb-20 sm:pb-8 font-body bg-white min-h-screen relative overflow-x-hidden">
@@ -1243,10 +1286,32 @@ function getLoginHTML() {
 
 function getAdminDashboardHTML() {
     return `
-    <div class="min-h-screen bg-gray-100 flex flex-col">
+    <div class="min-h-screen bg-gray-100 flex flex-col relative overflow-x-hidden">
+        
+        <!-- Admin Mobile Menu Overlay -->
+        <div id="admin-mobile-menu-overlay" onclick="toggleAdminMenu()" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity backdrop-blur-sm"></div>
+
+        <!-- Admin Mobile Menu Drawer -->
+        <div id="admin-mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-primary shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col font-body">
+             <div class="p-4 flex justify-between items-center border-b border-white/10 text-white">
+                <span class="font-bold text-xl">Admin Menu</span>
+                <button onclick="toggleAdminMenu()" class="hover:bg-white/10 p-1 rounded transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                ${getAdminNavLinks(true)}
+            </nav>
+        </div>
+
         <header class="bg-white shadow p-4 sticky top-0 z-10 shrink-0 font-body">
             <div class="max-w-full mx-auto flex justify-between items-center">
-                <h1 class="text-xl font-bold text-gray-800">Dashboard Admin</h1>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleAdminMenu()" class="sm:hidden p-1 hover:bg-gray-100 rounded">
+                        <i data-lucide="menu" class="w-6 h-6 text-gray-800"></i>
+                    </button>
+                    <h1 class="text-xl font-bold text-gray-800">Dashboard Admin</h1>
+                </div>
                 <div class="flex gap-2">
                     <button onclick="navigateTo('home')" class="px-3 py-1 text-sm border rounded hover:bg-gray-50">Lihat Web</button>
                     <button onclick="logoutAdmin()" class="px-3 py-1 text-sm bg-gray-800 text-white rounded hover:bg-black">Logout</button>
@@ -1256,29 +1321,9 @@ function getAdminDashboardHTML() {
 
         <div class="flex flex-1">
             <!-- Sidebar -->
-            <aside class="w-64 bg-primary shadow-md p-4 shrink-0 font-body">
+            <aside class="hidden sm:block w-64 bg-primary shadow-md p-4 shrink-0 font-body">
                 <nav class="space-y-2">
-                    <button onclick="navigateTo('admin-crm')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
-                        <i data-lucide="kanban-square" class="w-5 h-5 text-secondary"></i> CRM Pipeline
-                    </button>
-                    <button onclick="navigateTo('admin-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
-                        <i data-lucide="brain-circuit" class="w-5 h-5 text-secondary"></i> AI Buyer Persona
-                    </button>
-                    <button onclick="navigateTo('admin-calendar')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
-                        <i data-lucide="calendar-check" class="w-5 h-5 text-secondary"></i> Kalender Konten
-                    </button>
-                    <button onclick="navigateTo('admin-media')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
-                        <i data-lucide="image" class="w-5 h-5 text-secondary"></i> Media Library
-                    </button>
-                    <button onclick="navigateTo('admin-articles')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
-                        <i data-lucide="book-open" class="w-5 h-5 text-secondary"></i> Artikel
-                    </button>
-                    <button onclick="navigateTo('admin-article-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
-                        <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO
-                    </button>
-                    <button onclick="navigateTo('admin-training')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium bg-white/5">
-                        <i data-lucide="bot" class="w-5 h-5 text-accent"></i> Training AI
-                    </button>
+                    ${getAdminNavLinks(false)}
                 </nav>
             </aside>
 
@@ -1807,6 +1852,6 @@ function renderApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Houmi App v1.4 - Hamburger Menu 🍔");
+    console.log("Houmi App v1.5 - Admin Mobile Friendly 📱");
     renderApp();
 });
