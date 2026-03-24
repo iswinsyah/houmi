@@ -186,7 +186,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 // PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEsDC1FJ38TVzbMoDekvmBy_79RCRwaVDQMg3xjWxA3bdII4vUnvm9dVtdlezznn7l/exec";
+const GAS_API_URL = "PASTE_URL_BARU_HASIL_NEW_DEPLOYMENT_DISINI";
 const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -258,8 +258,12 @@ async function generateSEOArticle() {
         }
         `;
 
-        const response = await fetch(GAS_API_URL, {
+        // Bersihkan URL dari spasi (sering terjadi saat copas)
+        const cleanUrl = GAS_API_URL.trim();
+
+        const response = await fetch(cleanUrl, {
             method: "POST",
+            redirect: "follow", // Pastikan browser mengikuti redirect Google
             headers: { "Content-Type": "text/plain" }, // Gunakan text/plain agar tidak kena Preflight CORS
             body: JSON.stringify({ prompt: prompt })   // Kirim JSON string (Bisa muat data besar)
         });
@@ -322,7 +326,8 @@ async function generateSEOArticle() {
         resultArea.classList.remove('hidden');
     } catch (error) {
         if (error.message.includes("Failed to fetch")) {
-            alert("⛔ GAGAL KONEKSI!\n\nKemungkinan Penyebab:\n1. Nama Property di GAS salah (Harusnya: GEMINI_API_KEY).\n2. Lupa 'New Deployment' setelah edit.\n3. Koneksi internet tidak stabil.");
+            console.error(error);
+            alert("⛔ KONEKSI DIBLOKIR / SERVER ERROR!\n\nSolusi:\n1. Cek Console (F12) jika ada 'ERR_BLOCKED_BY_CLIENT' (Matikan AdBlocker).\n2. Pastikan Deploy GAS: 'Who has access' = 'Anyone'.\n3. Pastikan URL GAS adalah hasil 'New Deployment' (bukan url script editor).");
         } else {
             alert("Gagal generate: " + error.message);
         }
@@ -358,7 +363,7 @@ async function generateBuyerPersona() {
         return;
     }
 
-    if (GAS_API_URL === "PASTE_URL_WEB_APP_GOOGLE_SCRIPT_DISINI" || GAS_API_URL === "") {
+    if (!GAS_API_URL || GAS_API_URL.includes("PASTE_URL")) {
         alert("URL Google Apps Script belum dipasang di script.js!");
         return;
     }
@@ -424,7 +429,7 @@ async function generateBuyerPersona() {
 
     } catch (error) {
         if (error.message.includes("Failed to fetch")) {
-            alert("⛔ GAGAL KONEKSI!\n\nCek Script Properties di GAS:\nPastikan nama property adalah 'GEMINI_API_KEY' (bukan API_GEMINI_KEY).");
+            alert("⛔ GAGAL KONEKSI!\nPastikan URL GAS benar dan setting 'Who has access: Anyone'.");
         } else {
             alert("Gagal Analisa: " + error.message);
         }
@@ -447,7 +452,7 @@ async function generateContentCalendar() {
         return;
     }
 
-    if (GAS_API_URL === "PASTE_URL_WEB_APP_GOOGLE_SCRIPT_DISINI" || GAS_API_URL === "") {
+    if (!GAS_API_URL || GAS_API_URL.includes("PASTE_URL")) {
         alert("URL Google Apps Script belum dipasang!");
         return;
     }
@@ -503,7 +508,7 @@ async function generateContentCalendar() {
 
     } catch (error) {
         if (error.message.includes("Failed to fetch")) {
-            alert("⛔ GAGAL KONEKSI!\n\nCek Script Properties di GAS:\nPastikan nama property adalah 'GEMINI_API_KEY'.");
+            alert("⛔ GAGAL KONEKSI!\nPastikan URL GAS benar dan setting 'Who has access: Anyone'.");
         } else {
             alert("Gagal: " + error.message);
         }
