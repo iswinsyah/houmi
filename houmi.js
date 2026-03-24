@@ -186,7 +186,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // 👇 PASTE URL BARU DARI GOOGLE APPS SCRIPT (HASIL NEW DEPLOYMENT) DI BAWAH INI 👇
 // Hapus tulisan PASTE_URL_DISINI dan masukkan URL yang berakhiran /exec
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwSygIORKgII5_gs9JD_QyufBRky1CtQUBKxIdbO-I_-8tiyfv6zINYSGdFssLdJzVN/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzBi6fWQ7FYU7WyMyZGpHCkHR2aH1DnyaCjM9HgROfbILG_utSOIpgDSdsQ_g7WXZU/exec";
 const WHATSAPP_NUMBER = "+6285335068318"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
