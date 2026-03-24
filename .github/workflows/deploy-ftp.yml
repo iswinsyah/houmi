@@ -1,0 +1,30 @@
+name: Deploy to Hostinger via FTP
+
+on:
+  push:
+    branches:
+      - main # Akan berjalan otomatis setiap kali Anda Push ke branch main
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Wajib agar proses sinkronisasi file tidak error
+    
+    - name: 📂 Sync files to Hostinger
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        # server-dir: public_html/ # Buka komentar (hapus tanda '#') ini jika file web Anda harus ditaruh BUKAN di folder utama FTP, melainkan di dalam public_html
+        exclude: |
+          **/.git*
+          **/.git*/**
+          node_modules/**
+          .github/**
+          testing/**
