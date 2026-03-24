@@ -2007,9 +2007,4 @@ if (document.readyState === 'loading') {
 } else {
     console.log("Houmi App v5.8 - Init Direct (DOM Ready) ⚡");
     renderApp();
-}       renderApp();
-    });
-} else {
-    console.log("Houmi App v5.8 - Init Direct (DOM Ready) ⚡");
-    renderApp();
 }
