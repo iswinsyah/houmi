@@ -1,4 +1,4 @@
-console.log("🚀 HOUMI.JS v6.0 (Gemini 1.5 Flash Ready) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v6.1 (Final Stability & Error Check) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -186,7 +186,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // 👇 PASTE URL BARU DARI GOOGLE APPS SCRIPT (HASIL NEW DEPLOYMENT) DI BAWAH INI 👇
 // Hapus tulisan PASTE_URL_DISINI dan masukkan URL yang berakhiran /exec
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzBi6fWQ7FYU7WyMyZGpHCkHR2aH1DnyaCjM9HgROfbILG_utSOIpgDSdsQ_g7WXZU/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycby1iPoJj3bx7qEwdudHvMWqmb8J5Cnj-ikI5kXxLVWfOoz_RLKVRKTsZVcuCukwCf7p/exec";
 const WHATSAPP_NUMBER = "+6285335068318"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -418,6 +418,11 @@ async function generateBuyerPersona() {
         } catch (e) {
             throw new Error("Backend Error (Raw): " + responseText);
         }
+
+        // CEK ERROR DARI GOOGLE (PENTING: Agar ketahuan jika API Key salah/kosong)
+        if (data.error) {
+            throw new Error("Google AI Error: " + (data.error.message || JSON.stringify(data.error)));
+        }
         
         // 3. Tampilkan Hasil
         let aiText;
@@ -506,6 +511,11 @@ async function generateContentCalendar() {
             data = JSON.parse(responseText);
         } catch (e) {
             throw new Error("Respon Server bukan JSON valid: " + responseText.substring(0, 100));
+        }
+
+        // CEK ERROR DARI GOOGLE
+        if (data.error) {
+            throw new Error("Google AI Error: " + (data.error.message || JSON.stringify(data.error)));
         }
 
         let aiText = data.candidates[0].content.parts[0].text;
