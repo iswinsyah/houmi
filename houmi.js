@@ -1,5 +1,4 @@
-console.log("🚀 HOUMI.JS v5.8 (Re-Write & Stability) Berhasil Dimuat!");
-console.log("🚀 HOUMI.JS v5.9 (Gemini Flash Updated) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v6.0 (Gemini 1.5 Flash Ready) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -185,9 +184,9 @@ let editingArticleId = null;
 let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 
 // --- KONFIGURASI AI ---
-// PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
-// PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwB5TmvQ4ri0id7DwHKw0Je6rI2_IrS8db1eZSZi6_ac_PzjcEgWjH49ITenhNtcnag/exec";
+// 👇 PASTE URL BARU DARI GOOGLE APPS SCRIPT (HASIL NEW DEPLOYMENT) DI BAWAH INI 👇
+// Hapus tulisan PASTE_URL_DISINI dan masukkan URL yang berakhiran /exec
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwSygIORKgII5_gs9JD_QyufBRky1CtQUBKxIdbO-I_-8tiyfv6zINYSGdFssLdJzVN/exec";
 const WHATSAPP_NUMBER = "+6285335068318"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -2007,4 +2006,5 @@ if (document.readyState === 'loading') {
 } else {
     console.log("Houmi App v5.8 - Init Direct (DOM Ready) ⚡");
     renderApp();
+}   renderApp();
 }
