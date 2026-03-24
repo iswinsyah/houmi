@@ -186,7 +186,7 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // --- KONFIGURASI AI ---
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 // PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
-const GAS_API_URL = "PASTE_URL_BARU_HASIL_NEW_DEPLOYMENT_DISINI";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxTFjONTB3neyCNvp-xIk8C2j69yWYCNQU9ceCa7rwhybr_udhyePbXrKNX0QTEa8D3/exec";
 const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -282,7 +282,15 @@ async function generateSEOArticle() {
             throw new Error("Server error (Invalid JSON). Cek Console.");
         }
 
-            if (data.error) throw new Error("Google AI Error: " + JSON.stringify(data.error));
+        if (data.error) {
+            const errStr = JSON.stringify(data.error);
+            // Deteksi spesifik jika model Gemini lama sudah dihapus Google (404 Not Found)
+            if (errStr.includes("not found") || errStr.includes("404")) {
+                throw new Error("Model AI Usang (404). Mohon update script GAS Anda: ganti 'gemini-pro' menjadi 'gemini-1.5-flash'.");
+            }
+            throw new Error("Google AI Error: " + errStr);
+        }
+
         if (!data.candidates || !data.candidates[0].content) throw new Error("Format respons AI tidak sesuai/kosong.");
 
         let aiText = data.candidates[0].content.parts[0].text;
