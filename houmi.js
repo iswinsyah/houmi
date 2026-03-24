@@ -249,6 +249,7 @@ async function generateSEOArticle() {
         Panduan:
         1. Gaya Bahasa: Ramah, Informatif, Soft Selling (ajak menginap di Houmi).
         2. Format Output: JSON MURNI (tanpa markdown).
+        3. PENTING: Pastikan string JSON valid. Hindari karakter enter/newline (\n) mentah di dalam value. Gunakan tag HTML <br> atau <p>. Escape double quotes dengan benar.
         
         STRUKTUR JSON TARGET:
         {
@@ -273,10 +274,11 @@ async function generateSEOArticle() {
         try {
             data = JSON.parse(responseText);
         } catch (e) {
-            console.error("Gagal Parse JSON:", responseText);
+                console.error("Gagal Parse Respons Server GAS:", responseText);
             throw new Error("Server error (Invalid JSON). Cek Console.");
         }
 
+            if (data.error) throw new Error("Google AI Error: " + JSON.stringify(data.error));
         if (!data.candidates || !data.candidates[0].content) throw new Error("Format respons AI tidak sesuai/kosong.");
 
         let aiText = data.candidates[0].content.parts[0].text;
@@ -286,9 +288,29 @@ async function generateSEOArticle() {
         // Ambil JSON valid
         const firstBrace = aiText.indexOf('{');
         const lastBrace = aiText.lastIndexOf('}');
-        if (firstBrace !== -1) aiText = aiText.substring(firstBrace, lastBrace + 1);
+        
+        if (firstBrace !== -1 && lastBrace > firstBrace) {
+            aiText = aiText.substring(firstBrace, lastBrace + 1);
+        } else {
+            console.warn("Raw AI Text:", aiText);
+            throw new Error("AI tidak mengembalikan format JSON yang valid.");
+        }
 
-        const articleJson = JSON.parse(aiText);
+        let articleJson;
+        try {
+            articleJson = JSON.parse(aiText);
+        } catch (jsonError) {
+            // Upaya perbaikan manual untuk karakter newline yang sering bikin error
+            try {
+                // Ganti newline nyata dengan spasi agar JSON tidak rusak, karena HTML sudah pakai tag <p>
+                const sanitized = aiText.replace(/\n/g, " ");
+                articleJson = JSON.parse(sanitized);
+            } catch (retryError) {
+                console.error("JSON Error:", jsonError);
+                console.log("Raw Text yang gagal diparse:", aiText);
+                throw new Error("Gagal membaca struktur JSON dari AI. Cek Console (F12) untuk melihat teks aslinya.");
+            }
+        }
         
         // Simpan sementara di window untuk fungsi save
         window.generatedArticleCache = articleJson;

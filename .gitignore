@@ -1,14 +1,5 @@
-# Folder Upload (Jangan di-upload ke GitHub karena isinya file user)
-/uploads/
-
-# System Files (Mac/Windows)
-.DS_Store
+uploads/*
+!uploads/index.html
 Thumbs.db
-desktop.ini
-
-# IDE / Editor settings
-.vscode/
-.idea/
-*.log
+.DS_Store
 node_modules/
-.env
