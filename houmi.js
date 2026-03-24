@@ -1,4 +1,5 @@
 console.log("🚀 HOUMI.JS v5.8 (Re-Write & Stability) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v5.9 (Gemini Flash Updated) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -187,7 +188,8 @@ let calendarCursor = new Date(); // Kursor untuk navigasi kalender
 // PASTE URL WEB APP GOOGLE SCRIPT BOS DI BAWAH INI (Di dalam tanda kutip)
 // PENTING: Jika habis "New Deployment", WAJIB GANTI URL di bawah ini dengan yang baru!
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxTFjONTB3neyCNvp-xIk8C2j69yWYCNQU9ceCa7rwhybr_udhyePbXrKNX0QTEa8D3/exec";
-const WHATSAPP_NUMBER = "6281234567890"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwB5TmvQ4ri0id7DwHKw0Je6rI2_IrS8db1eZSZi6_ac_PzjcEgWjH49ITenhNtcnag/exec";
+const WHATSAPP_NUMBER = "+6285335068318"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
@@ -211,9 +213,9 @@ function setCategory(cat) {
 
 function getWhatsAppFloatingButton() {
     return `
-    <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Halo%20Gemini,%20tolong%20bantu%20saya%20mencari%20villa%20terbaik%20di%20Houmi..." target="_blank" class="fixed bottom-24 sm:bottom-8 right-4 sm:right-8 z-50 group">
+    <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hallo%20admin%20houmi,%20saya%20mau%20pesan%20villa" target="_blank" class="fixed bottom-24 sm:bottom-8 right-4 sm:right-8 z-50 group">
         <div class="absolute bottom-full right-0 mb-3 w-max bg-white text-dark text-xs font-bold px-4 py-2 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none origin-bottom-right">
-            Tanya Gemini AI 🧠
+            Hubungi Admin 📞
             <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white transform rotate-45"></div>
         </div>
         <div class="bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-[0_4px_14px_0_rgba(37,211,102,0.39)] hover:shadow-[0_6px_20px_rgba(37,211,102,0.23)] transition-all transform hover:scale-110 flex items-center justify-center">
@@ -2002,6 +2004,11 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         console.log("Houmi App v5.8 - Init via EventListener 🚀");
         renderApp();
+    });
+} else {
+    console.log("Houmi App v5.8 - Init Direct (DOM Ready) ⚡");
+    renderApp();
+}       renderApp();
     });
 } else {
     console.log("Houmi App v5.8 - Init Direct (DOM Ready) ⚡");
