@@ -1,5 +1,4 @@
 console.log("🚀 HOUMI.JS v6.1 (Final Stability & Error Check) Berhasil Dimuat!");
-console.log("🚀 HOUMI.JS v6.2 (Manual Mode - AI Disabled) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -188,7 +187,7 @@ let calendarCursor = new Date();
 // --- KONFIGURASI AI ---
 // 👇 PASTE URL BARU DARI GOOGLE APPS SCRIPT (HASIL NEW DEPLOYMENT) DI BAWAH INI 👇
 // Hapus tulisan PASTE_URL_DISINI dan masukkan URL yang berakhiran /exec
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzBi6fWQ7FYU7WyMyZGpHCkHR2aH1DnyaCjM9HgROfbILG_utSOIpgDSdsQ_g7WXZU/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxN22UL2gCkEEWza1uj936au8KU6exvg6aYFeZHtPZcUa2L1p8Ps5TvyMg4clKBzDVa/exec";
 const WHATSAPP_NUMBER = "+6285335068318"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -262,48 +261,46 @@ async function generateSEOArticle() {
 
         // Bersihkan URL dari spasi (sering terjadi saat copas)
         const cleanUrl = GAS_API_URL.trim();
-
+        
         const response = await fetch(cleanUrl, {
             method: "POST",
             redirect: "follow", // Pastikan browser mengikuti redirect Google
             headers: { "Content-Type": "text/plain" }, // Gunakan text/plain agar tidak kena Preflight CORS
-            body: JSON.stringify({ prompt: prompt })   // Kirim JSON string (Bisa muat data besar)
+            body: JSON.stringify({ prompt: prompt })
         });
 
-        if (!response.ok) throw new Error("HTTP Error: " + response.status);
+        if (!response.ok) throw new Error("Gagal menghubungi server AI (HTTP " + response.status + ")");
         
-        // --- PERBAIKAN TOTAL PARSING JSON ---
         const responseText = await response.text();
-        
-        // Pastikan tidak ada kata 'json' yang menggantung di kode
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (e) {
-                console.error("Gagal Parse Respons Server GAS:", responseText);
-            throw new Error("Server error (Invalid JSON). Cek Console.");
+            console.warn("Raw Response:", responseText);
+            throw new Error("Format respons AI tidak valid. Cek Console.");
         }
 
+        // HAPUS TOTAL: Pengecekan 'Model Usang' yang bikin error.
+        // Langsung cek error bawaan Google saja.
         if (data.error) {
-            // Tampilkan error asli dari Google (tanpa filter "Model Usang") agar support semua versi AI (Gemini 2.0 dll)
-            throw new Error("Google AI Error: " + (data.error.message || JSON.stringify(data.error)));
+            throw new Error("Google AI Error: " + JSON.stringify(data.error));
         }
 
-        if (!data.candidates || !data.candidates[0].content) throw new Error("Format respons AI tidak sesuai/kosong.");
+        if (!data.candidates || !data.candidates[0].content) {
+            throw new Error("AI tidak memberikan jawaban (Candidates Empty).");
+        }
 
         let aiText = data.candidates[0].content.parts[0].text;
-        // Bersihkan markdown jika AI bandel
+        
+        // Bersihkan markdown (```json ... ```) jika ada
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '');
         
-        // Ambil JSON valid
+        // Ambil bagian JSON saja (antisipasi teks pembuka/penutup)
         const firstBrace = aiText.indexOf('{');
         const lastBrace = aiText.lastIndexOf('}');
         
         if (firstBrace !== -1 && lastBrace > firstBrace) {
             aiText = aiText.substring(firstBrace, lastBrace + 1);
-        } else {
-            console.warn("Raw AI Text:", aiText);
-            throw new Error("AI tidak mengembalikan format JSON yang valid.");
         }
 
         let articleJson;
