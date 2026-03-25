@@ -1,4 +1,5 @@
 console.log("🚀 HOUMI.JS v6.1 (Final Stability & Error Check) Berhasil Dimuat!");
+console.log("🚀 HOUMI.JS v6.2 (Manual Mode - AI Disabled) Berhasil Dimuat!");
 // --- DATA & STATE MANAGEMENT ---
 
 const DEFAULT_DATA = [
@@ -181,12 +182,13 @@ let currentPage = 'home';
 let isAdminLoggedIn = localStorage.getItem('HOUMI_IS_ADMIN') === 'true';
 let editingVillaId = null;
 let editingArticleId = null;
-let calendarCursor = new Date(); // Kursor untuk navigasi kalender
+let tempGeneratedArticle = null;
+let calendarCursor = new Date();
 
 // --- KONFIGURASI AI ---
 // 👇 PASTE URL BARU DARI GOOGLE APPS SCRIPT (HASIL NEW DEPLOYMENT) DI BAWAH INI 👇
 // Hapus tulisan PASTE_URL_DISINI dan masukkan URL yang berakhiran /exec
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxN22UL2gCkEEWza1uj936au8KU6exvg6aYFeZHtPZcUa2L1p8Ps5TvyMg4clKBzDVa/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzBi6fWQ7FYU7WyMyZGpHCkHR2aH1DnyaCjM9HgROfbILG_utSOIpgDSdsQ_g7WXZU/exec";
 const WHATSAPP_NUMBER = "+6285335068318"; // GANTI DISINI: Masukkan nomor WA Admin/CS (Format: 628xxx tanpa + atau 0)
 
 const formatRupiah = (angka) => {
@@ -345,19 +347,15 @@ async function generateSEOArticle() {
     }
 }
 
-function saveGeneratedArticleToDraft() {
+function transferToEditor() {
     if (!window.generatedArticleCache) return;
-    const newArticle = {
-        id: Date.now(),
-        title: window.generatedArticleCache.title,
-        image: "https://images.unsplash.com/photo-1596401057633-565652f50000?auto=format&fit=crop&w=800&q=80",
-        date: new Date().toISOString().split('T')[0],
-        content: window.generatedArticleCache.content
-    };
-    articlesData.unshift(newArticle);
-    saveArticlesToStorage();
-    alert("Artikel berhasil disimpan ke Draft!");
-    navigateTo('admin-articles');
+    
+    // Simpan hasil generate ke variabel sementara
+    tempGeneratedArticle = window.generatedArticleCache;
+    editingArticleId = null; // Pastikan modenya 'Baru', bukan edit ID lama
+    
+    // Pindah ke halaman editor
+    navigateTo('admin-article-edit');
 }
 
 // --- AI GENERATOR FUNCTION ---
@@ -755,7 +753,16 @@ function deleteArticle(id) {
 
 function openArticleEditor(id = null) {
     editingArticleId = id;
+    if (!id) tempGeneratedArticle = null; // Reset draf AI jika buka editor manual (Tulis Baru)
     navigateTo('admin-article-edit');
+}
+
+// Fungsi Helper untuk Toolbar Editor Artikel
+function execCmd(command, value = null) {
+    document.execCommand(command, false, value);
+    // Fokus kembali ke editor setelah klik tombol toolbar
+    const editor = document.getElementById('editor-content');
+    if(editor) editor.focus();
 }
 
 function saveArticleData(e) {
@@ -766,8 +773,8 @@ function saveArticleData(e) {
         id: editingArticleId ? editingArticleId : Date.now(),
         title: form.title.value,
         image: form.image.value,
-        date: form.date.value,
-        content: form.content.value
+        date: form.date.value, 
+        content: document.getElementById('editor-content').innerHTML // Ambil dari Div ContentEditable
     };
 
     if (editingArticleId) {
@@ -776,6 +783,9 @@ function saveArticleData(e) {
     } else {
         articlesData.unshift(newArticle); // Artikel baru di paling atas
     }
+
+    // Reset temp data jika ada
+    tempGeneratedArticle = null;
 
     saveArticlesToStorage();
     navigateTo('admin-articles');
@@ -1170,6 +1180,11 @@ function getAdminNavLinks(isMobile = false) {
     <button onclick="navigateTo('admin-calendar'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="calendar-check" class="w-5 h-5 text-secondary"></i> Kalender Konten
     </button>
+    <!-- FITUR AI DINONAKTIFKAN
+    <button onclick="navigateTo('admin-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium opacity-50 cursor-not-allowed" title="Fitur AI Nonaktif">
+        <i data-lucide="brain-circuit" class="w-5 h-5 text-secondary"></i> AI Buyer Persona (Nonaktif)
+    </button> 
+    -->
     <button onclick="navigateTo('admin-media'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="image" class="w-5 h-5 text-secondary"></i> Media Library
     </button>
@@ -1178,10 +1193,14 @@ function getAdminNavLinks(isMobile = false) {
     </button>
     <button onclick="navigateTo('admin-article-generator'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO
+    <!-- 
+    <button onclick="navigateTo('admin-article-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium opacity-50 cursor-not-allowed">
+        <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO (Nonaktif)
     </button>
     <button onclick="navigateTo('admin-training'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium bg-white/5">
         <i data-lucide="bot" class="w-5 h-5 text-accent"></i> Training AI
     </button>
+    -->
     `;
 }
 
@@ -1612,7 +1631,7 @@ function getAdminArticleGeneratorHTML() {
             <div id="article-gen-result" class="hidden bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden slide-in">
                 <div class="bg-gray-50 p-4 border-b border-gray-200 flex justify-between items-center">
                     <h3 class="font-bold text-gray-700">Preview</h3>
-                    <button onclick="saveGeneratedArticleToDraft()" class="bg-blue-600 text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-blue-700">Simpan Draft</button>
+                    <button onclick="transferToEditor()" class="bg-blue-600 text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"><i data-lucide="edit-3" class="w-4 h-4"></i> Siap Terbitkan</button>
                 </div>
                 <div class="p-8 prose max-w-none">
                     <h1 id="preview-title" class="text-2xl font-bold mb-4"></h1>
@@ -1731,9 +1750,29 @@ function getAdminTrainingHTML() {
 }
 
 function getArticleEditorHTML() {
-    const article = editingArticleId ? articlesData.find(a => a.id === editingArticleId) : {
-        title: '', image: '', date: new Date().toISOString().split('T')[0], content: ''
+    let article = {
+        title: '', 
+        image: '', 
+        date: new Date().toISOString().split('T')[0], 
+        content: '<p>Mulai menulis di sini...</p>'
     };
+
+    // Cek apakah mode edit artikel lama
+    if (editingArticleId) {
+        const existing = articlesData.find(a => a.id === editingArticleId);
+        if (existing) article = { ...existing };
+    } 
+    // Cek apakah dari hasil generate AI
+    else if (tempGeneratedArticle) {
+        article.title = tempGeneratedArticle.title;
+        article.content = tempGeneratedArticle.content;
+        // Gambar default random jika dari AI
+        article.image = "https://images.unsplash.com/photo-1596401057633-565652f50000?auto=format&fit=crop&w=800&q=80"; 
+    }
+
+    // Style tombol toolbar
+    const btnStyle = "p-2 hover:bg-gray-200 rounded text-gray-600 transition-colors";
+    const btnActiveStyle = "p-2 bg-gray-200 rounded text-black font-bold";
     
     return `
     <div class="min-h-screen bg-gray-50 pb-20 font-body">
@@ -1757,8 +1796,36 @@ function getArticleEditorHTML() {
                     <p class="text-[10px] text-gray-400 mt-1">Ambil link dari Media Library jika perlu.</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Isi Artikel</label>
-                    <textarea name="content" rows="12" class="w-full border p-2 rounded-lg" placeholder="Tulis konten menarik di sini..." required>${article.content}</textarea>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Konten Artikel</label>
+                    
+                    <!-- TOOLBAR EDITOR -->
+                    <div class="border border-gray-300 rounded-t-lg bg-gray-100 p-2 flex flex-wrap gap-1 items-center sticky top-[70px] z-20 shadow-sm">
+                        <button type="button" onclick="execCmd('bold')" class="${btnStyle}" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="execCmd('italic')" class="${btnStyle}" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="execCmd('underline')" class="${btnStyle}" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                        <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                        
+                        <button type="button" onclick="execCmd('formatBlock', 'H2')" class="${btnStyle} font-serif font-bold" title="Heading 1">H1</button>
+                        <button type="button" onclick="execCmd('formatBlock', 'H3')" class="${btnStyle} font-serif font-bold text-sm" title="Heading 2">H2</button>
+                        <button type="button" onclick="execCmd('formatBlock', 'H4')" class="${btnStyle} font-serif font-bold text-xs" title="Heading 3">H3</button>
+                        <div class="w-px h-6 bg-gray-300 mx-1"></div>
+
+                        <button type="button" onclick="execCmd('justifyLeft')" class="${btnStyle}" title="Rata Kiri"><i data-lucide="align-left" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="execCmd('justifyCenter')" class="${btnStyle}" title="Rata Tengah"><i data-lucide="align-center" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="execCmd('justifyRight')" class="${btnStyle}" title="Rata Kanan"><i data-lucide="align-right" class="w-4 h-4"></i></button>
+                        <div class="w-px h-6 bg-gray-300 mx-1"></div>
+
+                        <button type="button" onclick="const url=prompt('Masukkan URL:'); if(url) execCmd('createLink', url)" class="${btnStyle}" title="Link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="execCmd('removeFormat')" class="${btnStyle} text-red-500" title="Hapus Format"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </div>
+
+                    <!-- AREA EDIT (WYSIWYG) -->
+                    <div id="editor-content" 
+                         contenteditable="true" 
+                         class="w-full border-x border-b border-gray-300 p-4 rounded-b-lg min-h-[300px] bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 prose max-w-none"
+                    >
+                        ${article.content}
+                    </div>
                 </div>
                 <div class="pt-4">
                     <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary/90 shadow-lg">Simpan Artikel</button>
