@@ -758,6 +758,31 @@ function execCmd(command, value = null) {
     if(editor) editor.focus();
 }
 
+function insertLink(e) {
+    e.preventDefault(); // Mencegah tombol merebut fokus
+    const selection = window.getSelection();
+    if (selection.rangeCount === 0 || selection.toString().length === 0) {
+        alert("Silakan sorot (blok) teks yang ingin diberi link terlebih dahulu!");
+        return;
+    }
+    
+    // Simpan range seleksi saat ini
+    const range = selection.getRangeAt(0).cloneRange();
+    
+    // Tampilkan prompt
+    const url = prompt('Masukkan URL tautan (contoh: https://google.com):');
+    if (url) {
+        // Kembalikan seleksi sebelum eksekusi
+        selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand('createLink', false, url);
+    }
+    
+    // Kembalikan fokus
+    const editor = document.getElementById('editor-content');
+    if(editor) editor.focus();
+}
+
 function saveArticleData(e) {
     e.preventDefault();
     const form = e.target;
@@ -1808,7 +1833,7 @@ function getArticleEditorHTML() {
                         <button type="button" onclick="execCmd('justifyRight')" class="${btnStyle}" title="Rata Kanan"><i data-lucide="align-right" class="w-4 h-4"></i></button>
                         <div class="w-px h-6 bg-gray-300 mx-1"></div>
 
-                        <button type="button" onclick="const url=prompt('Masukkan URL:'); if(url) execCmd('createLink', url)" class="${btnStyle}" title="Link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                        <button type="button" onmousedown="insertLink(event)" class="${btnStyle}" title="Link"><i data-lucide="link" class="w-4 h-4"></i></button>
                         <button type="button" onclick="execCmd('removeFormat')" class="${btnStyle} text-red-500" title="Hapus Format"><i data-lucide="x" class="w-4 h-4"></i></button>
                     </div>
 
