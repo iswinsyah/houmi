@@ -210,17 +210,175 @@ function setCategory(cat) {
     renderApp();
 }
 
+// --- LOGIKA CS AI CHAT WIDGET ---
+let chatHistory = [];
+
+window.toggleAIChat = function() {
+    const w = document.getElementById('ai-chat-window');
+    if(!w) return;
+    if(w.classList.contains('hidden')) {
+        w.classList.remove('hidden');
+        w.classList.add('flex');
+        setTimeout(() => {
+            const input = document.getElementById('ai-chat-input');
+            if(input) input.focus();
+            scrollToBottomAIChat();
+        }, 100);
+    } else {
+        w.classList.add('hidden');
+        w.classList.remove('flex');
+    }
+};
+
+window.scrollToBottomAIChat = function() {
+    const container = document.getElementById('ai-chat-messages');
+    if(container) container.scrollTop = container.scrollHeight;
+};
+
+window.appendChatBubble = function(role, text) {
+    const typing = document.getElementById('ai-typing-indicator');
+    if(!typing) return;
+    
+    const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    const isUser = role === 'user';
+    const bubbleRaw = `
+        <div class="flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'} animate-fade-in-up">
+            <div class="${isUser ? 'bg-[#D9FDD3] text-gray-800 rounded-b-xl rounded-tl-xl' : 'bg-white text-gray-800 rounded-b-xl rounded-tr-xl border border-gray-200'} text-sm p-3 font-body shadow-sm max-w-[85%] relative whitespace-pre-wrap break-words">
+                ${text}
+            </div>
+            <span class="text-[10px] text-gray-400 ${isUser ? 'mr-1' : 'ml-1'}">${timeStr} ${isUser ? '<i data-lucide="check-check" class="w-3 h-3 inline text-blue-400"></i>' : ''}</span>
+        </div>
+    `;
+    
+    typing.insertAdjacentHTML('beforebegin', bubbleRaw);
+    if(window.lucide) window.lucide.createIcons();
+    scrollToBottomAIChat();
+};
+
+window.sendAIChatMessage = async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('ai-chat-input');
+    const btn = document.getElementById('ai-chat-btn');
+    const typing = document.getElementById('ai-typing-indicator');
+    const msg = input.value.trim();
+    if(!msg) return;
+    
+    input.value = '';
+    input.disabled = true;
+    btn.disabled = true;
+    
+    appendChatBubble('user', msg);
+    typing.classList.remove('hidden');
+    typing.classList.add('flex');
+    scrollToBottomAIChat();
+    
+    let promptString = "Percakapan dengan Customer:\\n\\n";
+    chatHistory.push({ role: 'user', msg: msg });
+    
+    const recent = chatHistory.slice(-5);
+    recent.forEach(c => {
+        promptString += `${c.role === 'user' ? 'Customer' : 'CS Mimin'}: ${c.msg}\\n`;
+    });
+    promptString += "\\nCS Mimin: ";
+    
+    try {
+        const response = await fetch(GAS_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ action: "chat", prompt: promptString })
+        });
+        
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const txt = await response.text();
+        let payload = null;
+        try { payload = JSON.parse(txt); } catch(err) { throw new Error("Data salah " + txt.substring(0, 20)); }
+        
+        if (payload.error) throw new Error(payload.error.message || JSON.stringify(payload.error));
+        
+        let aiText = payload.candidates[0].content.parts[0].text;
+        aiText = aiText.replace(/```html/g, '').replace(/```/g, '').trim();
+        
+        chatHistory.push({ role: 'ai', msg: aiText });
+        typing.classList.remove('flex');
+        typing.classList.add('hidden');
+        appendChatBubble('ai', aiText);
+        
+    } catch (err) {
+        typing.classList.remove('flex');
+        typing.classList.add('hidden');
+        appendChatBubble('ai', "Maaf Kak, jaringan Mimin lagi kendala nih 😔. Boleh coba tanya lagi? Atau bisa langsung ngobrol bareng Admin Manusia klik link di bawah 👇.");
+    } finally {
+        input.disabled = false;
+        btn.disabled = false;
+        input.focus();
+    }
+};
+
 function getWhatsAppFloatingButton() {
     return `
-    <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hallo%20admin%20houmi,%20saya%20mau%20pesan%20villa" target="_blank" class="fixed bottom-24 sm:bottom-8 right-4 sm:right-8 z-50 group">
-        <div class="absolute bottom-full right-0 mb-3 w-max bg-white text-dark text-xs font-bold px-4 py-2 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none origin-bottom-right">
-            Hubungi Admin 📞
-            <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white transform rotate-45"></div>
+    <div id="ai-chat-widget" class="fixed bottom-24 sm:bottom-8 right-4 sm:right-8 z-50 flex flex-col items-end font-body">
+        
+        <!-- Jendela Chat (Awalnya Sembunyi) -->
+        <div id="ai-chat-window" class="hidden w-[320px] sm:w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-200 mb-4 flex-col transition-all duration-300 origin-bottom-right overflow-hidden">
+            <!-- Header mirip WA -->
+            <div class="bg-[#075E54] p-3 sm:p-4 text-white flex items-center justify-between shadow-md relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center overflow-hidden shrink-0">
+                        <span class="text-xl">🤖</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-[15px] leading-tight">CS Mimin Houmi</h3>
+                        <p class="text-[11px] text-green-100 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full inline-block"></span> Online (AI)</p>
+                    </div>
+                </div>
+                <button onclick="toggleAIChat()" class="text-white/80 hover:text-white p-1 rounded-full transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <!-- Area Percakapan -->
+            <div id="ai-chat-messages" class="flex-1 p-4 bg-[#E5DDD5] bg-opacity-40 overflow-y-auto space-y-3 relative custom-scrollbar" style="height: 380px;">
+                <!-- Chat Bubble AI Pertama -->
+                <div class="flex flex-col gap-1 items-start">
+                    <div class="bg-white text-gray-800 text-sm p-3 font-body shadow-sm rounded-b-xl rounded-tr-xl border border-gray-200 max-w-[85%] relative">
+                        Halo Kak! 👋 Mimin Houmi siap bantu. Ada yang mau ditanyakan soal villa atau mau booking di tanggal tertentu? 
+                    </div>
+                    <span class="text-[10px] text-gray-400 ml-1">Baru saja</span>
+                </div>
+                
+                <!-- Pesan "Typing..." tersembunyi -->
+                <div id="ai-typing-indicator" class="hidden flex-col gap-1 items-start">
+                    <div class="bg-white text-gray-800 text-sm py-3 px-4 rounded-b-xl rounded-tr-xl shadow-sm border border-gray-200 max-w-[85%] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Input Area -->
+            <form onsubmit="sendAIChatMessage(event)" class="p-2 sm:p-3 bg-[#F0F0F0] flex items-end gap-2 border-t border-gray-200">
+                <input type="text" id="ai-chat-input" placeholder="Ketik pesan..." class="flex-1 px-4 py-3 rounded-full text-sm border-none focus:ring-0 focus:outline-none shadow-sm text-dark bg-white" autocomplete="off" required>
+                <button type="submit" id="ai-chat-btn" class="bg-[#128C7E] text-white w-10 h-10 rounded-full shadow-md hover:bg-[#075E54] transition-colors shrink-0 flex items-center justify-center border-none">
+                    <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
+                </button>
+            </form>
+            
+            <!-- Link Alternatif Asli WhatsApp -->
+            <div class="bg-white text-center py-2 text-[10px] border-t border-gray-100 text-gray-500">
+                Mau titip DP / Lanjut CS Manusia? <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Halo%20Admin!%20Saya%20mau%20pesan%20villa." target="_blank" class="text-[#128C7E] font-bold hover:underline">Ke WhatsApp Asli</a>
+            </div>
         </div>
-        <div class="bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-[0_4px_14px_0_rgba(37,211,102,0.39)] hover:shadow-[0_6px_20px_rgba(37,211,102,0.23)] transition-all transform hover:scale-110 flex items-center justify-center">
+
+        <!-- Tombol Apung (Trigger) -->
+        <button onclick="toggleAIChat()" class="bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-[0_4px_14px_0_rgba(37,211,102,0.39)] hover:shadow-[0_6px_20px_rgba(37,211,102,0.23)] transition-all transform hover:scale-110 flex items-center justify-center relative z-20">
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border border-white text-[9px] font-bold items-center justify-center text-white">1</span>
+            </span>
             <i data-lucide="message-circle" class="w-7 h-7"></i>
-        </div>
-    </a>
+        </button>
+    </div>
     `;
 }
 
@@ -956,9 +1114,9 @@ async function submitBooking(e, villaName, villaId) {
         
         const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
         
-        if(confirm('Pemesanan berhasil disimpan! Lanjut konfirmasi ke WhatsApp Admin?')) {
-            window.open(waLink, '_blank');
-        }
+        // By-pass konfirmasi, langsung arahkan ke WhatsApp asli Admin
+        alert('Pemesanan berhasil disimpan! Mengarahkan otomatis ke WhatsApp Admin...');
+        window.open(waLink, '_blank');
 
     } catch (err) {
         alert("Terjadi kesalahan: " + err.message);
