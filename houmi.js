@@ -1369,14 +1369,13 @@ function getAdminNavLinks(isMobile = false) {
     </button>
     <button onclick="navigateTo('admin-article-generator'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO
-    <!-- 
-    <button onclick="navigateTo('admin-article-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium opacity-50 cursor-not-allowed">
-        <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO (Nonaktif)
     </button>
-    <button onclick="navigateTo('admin-training'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium bg-white/5">
-        <i data-lucide="bot" class="w-5 h-5 text-accent"></i> Training AI
+    
+    <div class="my-4 border-t border-white/10"></div>
+    
+    <button onclick="navigateTo('admin-training'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium bg-white/5 border border-white/10 shadow-sm">
+        <i data-lucide="bot" class="w-5 h-5 text-accent animate-pulse"></i> Training Otak CS AI
     </button>
-    -->
     `;
 }
 
