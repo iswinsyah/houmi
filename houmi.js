@@ -1356,6 +1356,11 @@ function getAdminNavLinks(isMobile = false) {
     <button onclick="navigateTo('admin-calendar'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="calendar-check" class="w-5 h-5 text-secondary"></i> Kalender Konten
     </button>
+    <div class="pl-4 border-l border-white/5 ml-4 mt-1 mb-3">
+        <button onclick="navigateTo('admin-sosmed-generator'); ${clickAction}" class="w-full text-left flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition text-secondary text-sm font-medium text-gray-300">
+            <i data-lucide="clapperboard" class="w-4 h-4 text-pink-400"></i> Buat Konten Sosmed
+        </button>
+    </div>
     <!-- FITUR AI DINONAKTIFKAN
     <button onclick="navigateTo('admin-generator')" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium opacity-50 cursor-not-allowed" title="Fitur AI Nonaktif">
         <i data-lucide="brain-circuit" class="w-5 h-5 text-secondary"></i> AI Buyer Persona (Nonaktif)
@@ -1855,6 +1860,129 @@ function getAdminGeneratorHTML() {
     `;
 }
 
+// --- SOSMED CONTENT GENERATOR ---
+async function generateSosmedContent() {
+    const btn = document.getElementById('btn-sosmed-gen');
+    const resultArea = document.getElementById('sosmed-result');
+    const loadingArea = document.getElementById('sosmed-loading');
+    const inputTopic = document.getElementById('sosmed-topic').value.trim();
+    const inputBrief = document.getElementById('sosmed-brief').value.trim();
+
+    if (!inputTopic) {
+        alert("Silakan masukkan topik konten terlebih dahulu!");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    resultArea.classList.add('hidden');
+    loadingArea.classList.remove('hidden');
+
+    try {
+        const prompt = `
+        Bertindaklah sebagai Content Creator Expert untuk Houmi Villa.
+        Buatkan materi lengkap untuk diposting di TikTok/Instagram Reels.
+        
+        Topik Konten: ${inputTopic}
+        Brief Tambahan: ${inputBrief ? inputBrief : "Tidak ada."}
+        
+        TUGAS:
+        Buat konten dalam 4 bagian dengan format terstruktur menggunakan HTML dasar (<h2>, <p>, <ul>, <b>):
+        1. 🎥 Konsep Visual Video (Ide angel kamera/suasana per detik)
+        2. 🎙️ Script Voice Over (Skrip pendek untuk di-dubbing)
+        3. ✍️ Caption (Copywriting memikat, tambahkan ajakan Call To Action ke WA)
+        4. #️⃣ Hashtag (Daftar hashtag populer dan relevan)
+        `;
+
+        const response = await fetch(GAS_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: prompt })
+        });
+
+        if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+
+        const responseText = await response.text();
+        let data;
+        try { data = JSON.parse(responseText); } catch (e) { throw new Error("Respon bukan JSON valid."); }
+        if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+
+        let aiText = data.candidates[0].content.parts[0].text;
+        aiText = aiText.replace(/```html/g, '').replace(/```/g, '');
+
+        resultArea.innerHTML = `
+            <div class="prose max-w-none text-sm text-gray-800">
+                ${aiText}
+            </div>
+            <div class="mt-6 flex justify-end border-t pt-4">
+                <button onclick="this.innerHTML='<i data-lucide=\\'check\\'></i> Tersalin!'; navigator.clipboard.writeText(document.getElementById('sosmed-result').innerText); setTimeout(()=>this.innerHTML='<i data-lucide=\\'copy\\'></i> Copy Text Saja', 2000)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
+                    <i data-lucide="copy" class="w-4 h-4"></i> Copy Text Saja
+                </button>
+            </div>
+        `;
+        resultArea.classList.remove('hidden');
+        if (window.lucide) window.lucide.createIcons();
+
+    } catch (error) {
+        if (error.message.includes("Failed to fetch")) {
+            alert("⛔ GAGAL KONEKSI SERVER AI!");
+        } else {
+            alert("Terjadi kesalahan:\\n" + error.message);
+        }
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        loadingArea.classList.add('hidden');
+    }
+}
+
+function getAdminSosmedGeneratorHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="video" class="w-6 h-6 text-pink-500"></i> Konten Sosmed
+            </h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-4 sm:p-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <div class="bg-pink-50 w-16 h-16 rounded-full flex items-center justify-center mb-4 text-pink-500">
+                    <i data-lucide="clapperboard" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Content Sosmed Generator</h2>
+                <p class="text-gray-500 mb-6 text-sm">
+                    Buat Script Video, Voice Over, Caption, dan Hashtag instan berdasarkan topik di Kalender Konten Anda.
+                </p>
+                
+                <div class="space-y-4 text-left">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Topik Konten (Sesuai Kalender)</label>
+                        <input type="text" id="sosmed-topic" placeholder="Misal: Keseruan BBQ di Tropis Pool Villa" class="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Deskripsi Tambahan / Promo (Opsional)</label>
+                        <textarea id="sosmed-brief" placeholder="Misal: Sediakan skrip yang berujung ajakan diskon 20%" class="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-sm" rows="2"></textarea>
+                    </div>
+                    <button id="btn-sosmed-gen" onclick="generateSosmedContent()" class="w-full bg-pink-500 text-white font-bold py-3 px-8 rounded-xl hover:bg-pink-600 shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="wand-2" class="w-5 h-5"></i> Generate Materi Sosmed
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sosmed Loading -->
+            <div id="sosmed-loading" class="hidden mt-8 text-center py-10">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-pink-500 mx-auto mb-4"></div>
+                <p class="text-pink-500 font-bold animate-pulse">Mengetik Script & Caption (5-10 detik)...</p>
+            </div>
+            
+            <!-- Sosmed Result Area -->
+            <div id="sosmed-result" class="hidden mt-6 overflow-x-hidden bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 slide-in text-left"></div>
+        </main>
+    </div>
+    `;
+}
+
 function getAdminCalendarHTML() {
     return `
     <div class="min-h-screen bg-gray-100 pb-20 font-body">
@@ -2255,6 +2383,8 @@ function renderApp() {
         appDiv.innerHTML = getAdminArticleGeneratorHTML();
     } else if (currentPage === 'admin-calendar') {
         appDiv.innerHTML = getAdminCalendarHTML();
+    } else if (currentPage === 'admin-sosmed-generator') {
+        appDiv.innerHTML = getAdminSosmedGeneratorHTML();
     } else if (currentPage === 'admin-training') {
         appDiv.innerHTML = getAdminTrainingHTML();
     } else if (currentPage === 'admin-articles') {
