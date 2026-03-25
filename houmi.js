@@ -285,12 +285,8 @@ async function generateSEOArticle() {
         }
 
         if (data.error) {
-            const errStr = JSON.stringify(data.error);
-            // Deteksi spesifik jika model Gemini lama sudah dihapus Google (404 Not Found)
-            if (errStr.includes("not found") || errStr.includes("404")) {
-                throw new Error("Model AI Usang (404). Mohon update script GAS Anda: ganti 'gemini-pro' menjadi 'gemini-1.5-flash'.");
-            }
-            throw new Error("Google AI Error: " + errStr);
+            // Tampilkan error asli dari Google (tanpa filter "Model Usang") agar support semua versi AI (Gemini 2.0 dll)
+            throw new Error("Google AI Error: " + (data.error.message || JSON.stringify(data.error)));
         }
 
         if (!data.candidates || !data.candidates[0].content) throw new Error("Format respons AI tidak sesuai/kosong.");
