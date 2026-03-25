@@ -1767,6 +1767,24 @@ function getAdminTrainingHTML() {
     `;
 }
 
+function openMediaFromEditor() {
+    // Simpan semua state editor yang sekarang supaya tidak hilang
+    const form = document.querySelector('form');
+    if (form) {
+        window.articleDraftForMedia = {
+            title: form.title ? form.title.value : '',
+            date: form.date ? form.date.value : new Date().toISOString().split('T')[0],
+            image: form.image ? form.image.value : '',
+            content: document.getElementById('editor-content') ? document.getElementById('editor-content').innerHTML : ''
+        };
+    }
+    
+    // Set flag supaya halaman Media Library tau kita datang dari editor
+    window.mediaCallbackPage = 'admin-article-edit';
+    
+    navigateTo('admin-media');
+}
+
 function getArticleEditorHTML() {
     let article = {
         title: '', 
@@ -1775,8 +1793,13 @@ function getArticleEditorHTML() {
         content: '<p>Mulai menulis di sini...</p>'
     };
 
+    // Cek draft jika barusan kembali dari Media Library
+    if (window.articleDraftForMedia) {
+        article = { ...window.articleDraftForMedia };
+        window.articleDraftForMedia = null; // Clear flag
+    }
     // Cek apakah mode edit artikel lama
-    if (editingArticleId) {
+    else if (editingArticleId) {
         const existing = articlesData.find(a => a.id === editingArticleId);
         if (existing) article = { ...existing };
     } 
@@ -1809,9 +1832,12 @@ function getArticleEditorHTML() {
                     <input type="date" name="date" value="${article.date}" class="w-full border p-2 rounded-lg" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">URL Gambar Utama</label>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-sm font-bold text-gray-700">URL Gambar Utama / Sisip Gambar</label>
+                        <button type="button" onclick="openMediaFromEditor()" class="text-[10px] sm:text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold px-3 py-1 rounded flex items-center gap-1 shadow-sm border border-blue-100 transition-colors"><i data-lucide="image" class="w-3 h-3 sm:w-4 sm:h-4"></i> Ke Media Library</button>
+                    </div>
                     <input type="text" name="image" value="${article.image}" class="w-full border p-2 rounded-lg" placeholder="https://..." required>
-                    <p class="text-[10px] text-gray-400 mt-1">Ambil link dari Media Library jika perlu.</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Paste link di atas ATAU sorot teks di editor bawah lalu klik ikon Link (<i data-lucide="link" class="w-3 h-3 inline"></i>) untuk sisipkan link pada teks.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">Konten Artikel</label>
@@ -2000,9 +2026,14 @@ function getAdminCRMHTML() {
 function getMediaLibraryHTML() {
     return `
     <div class="min-h-screen bg-gray-100 pb-20 font-body">
-        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
-            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-            <h1 class="text-xl font-bold text-gray-800">Media Library</h1>
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+                <h1 class="text-xl font-bold text-gray-800">Media Library</h1>
+            </div>
+            ${window.mediaCallbackPage ? `
+            <button onclick="let p=window.mediaCallbackPage; window.mediaCallbackPage=null; navigateTo(p)" class="bg-primary text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 hover:bg-primary/90 transition-colors"><i data-lucide="check-circle-2" class="w-4 h-4"></i> Selesai & Kembali</button>
+            ` : ''}
         </header>
         <main class="max-w-5xl mx-auto p-4">
             <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
