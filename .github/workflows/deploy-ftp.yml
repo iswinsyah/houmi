@@ -21,7 +21,7 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: public_html/ # Target ke folder public_html Hostinger
+        server-dir: ./ # Target ke folder root FTP (karena root FTP di Hostinger sudah otomatis public_html)
         exclude: |
           **/.git*
           **/.git*/**
