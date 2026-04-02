@@ -99,6 +99,24 @@ let mediaData = safeParse('HOUMI_MEDIA', DEFAULT_MEDIA);
 let articlesData = safeParse('HOUMI_ARTICLES', DEFAULT_ARTICLES);
 let bookingsData = safeParse('HOUMI_BOOKINGS', []);
 
+let agentsData = safeParse('HOUMI_AGENTS', []);
+function saveAgentsToStorage() {
+    localStorage.setItem('HOUMI_AGENTS', JSON.stringify(agentsData));
+    renderApp();
+}
+
+function initTracking() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if (ref) localStorage.setItem('HOUMI_TRACKING_REF', ref);
+}
+initTracking();
+
+function getAdminArticlesHTML() { return ""; }
+function getAdminGalleryHTML() { return ""; }
+function getAdminTestimonialsHTML() { return ""; }
+function getAdminAgentsHTML() { return ""; }
+
 // Default System Prompt untuk AI
 const DEFAULT_AI_PROMPT = `
 Anda adalah 'Mimin Houmi', Customer Service AI untuk Houmi Villa di Batu, Malang.
@@ -2586,6 +2604,160 @@ function getAgentDashboardHTML() {
                         Copy Link Beranda Saja
                     </button>
                 </div>
+            </div>
+        </main>
+    </div>
+    `;
+}
+
+// === MISSING MENUS PATCH ===
+
+function deleteArticle(id) {
+    if(confirm('Hapus artikel ini permanen?')) {
+        articlesData = articlesData.filter(a => a.id !== id);
+        saveArticlesToStorage();
+    }
+}
+
+function getAdminArticlesHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+                <h1 class="text-xl font-bold text-gray-800">Kelola Artikel</h1>
+            </div>
+            <button onclick="editingArticleId=null; tempGeneratedArticle=null; navigateTo('admin-article-edit')" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition"><i data-lucide="plus" class="w-4 h-4"></i> Tulis Baru</button>
+        </header>
+        <main class="max-w-4xl mx-auto p-4">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <h3 class="font-bold text-gray-700">Daftar Artikel SEO</h3>
+                    <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full font-bold">${articlesData.length} Total</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                    ${articlesData.map(a => `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition">
+                        <img src="${a.image}" alt="${a.title}" class="w-full h-32 object-cover bg-gray-100">
+                        <div class="p-4 flex-1 flex flex-col">
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${a.date}</p>
+                            <h4 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2" title="${a.title}">${a.title}</h4>
+                            <div class="mt-auto flex justify-end gap-2 border-t border-gray-100 pt-3">
+                                <button onclick="editingArticleId=${a.id}; navigateTo('admin-article-edit')" class="text-blue-500 hover:text-blue-700 bg-blue-50 p-2 rounded-lg transition" title="Edit"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                <button onclick="deleteArticle(${a.id})" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg transition" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>
+                ${articlesData.length === 0 ? '<div class="text-center text-gray-400 py-10"><i data-lucide="book-open" class="w-12 h-12 mx-auto mb-3 opacity-50"></i><p>Belum ada artikel. Yuk tulis yang pertama!</p></div>' : ''}
+            </div>
+        </main>
+    </div>
+    `;
+}
+
+function getAdminGalleryHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800">Kelola Galeri</h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm text-center">
+                <i data-lucide="camera" class="w-12 h-12 text-primary mx-auto mb-4 opacity-50"></i>
+                <h3 class="font-bold text-gray-800 mb-2">Galeri Kenangan Utama</h3>
+                <p class="text-sm text-gray-500 mb-4">Galeri di halaman utama saat ini menggunakan hardcoded data atau dari Media Library Anda. Pastikan Anda mengunggah foto-foto terbaik tamu Anda di Media Library.</p>
+                <button onclick="navigateTo('admin-media')" class="bg-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-primary/90 transition shadow-md">
+                    Ke Media Library
+                </button>
+            </div>
+        </main>
+    </div>
+    `;
+}
+
+function getAdminTestimonialsHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800">Kelola Testimoni</h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm text-center">
+                <i data-lucide="message-square" class="w-12 h-12 text-primary mx-auto mb-4 opacity-50"></i>
+                <h3 class="font-bold text-gray-800 mb-2">Manajemen Testimoni Dinamis</h3>
+                <p class="text-sm text-gray-500 mb-4">Fitur penambahan testimoni dinamis sedang dalam pengembangan. Untuk saat ini testimoni depan adalah statis.</p>
+                <button onclick="navigateTo('admin-dashboard')" class="bg-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-primary/90 transition shadow-md">
+                    Kembali ke Dashboard
+                </button>
+            </div>
+        </main>
+    </div>
+    `;
+}
+
+function deleteAgent(id) {
+    if(confirm('Hapus agen ini?')) {
+        agentsData = agentsData.filter(a => a.id !== id);
+        saveAgentsToStorage();
+    }
+}
+
+function saveAgent(e) {
+    e.preventDefault();
+    const form = e.target;
+    agentsData.unshift({
+        id: Date.now(),
+        name: form.name.value,
+        whatsapp: form.whatsapp.value.replace(/[^0-9]/g, '')
+    });
+    saveAgentsToStorage();
+    form.reset();
+}
+
+function getAdminAgentsHTML() {
+    return `
+    <div class="min-h-screen bg-gray-100 pb-20 font-body">
+        <header class="bg-white shadow p-4 sticky top-0 z-10 flex items-center gap-3">
+            <button onclick="navigateTo('admin-dashboard')" class="p-1 hover:bg-gray-100 rounded"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h1 class="text-xl font-bold text-gray-800">Kelola Mitra Agen</h1>
+        </header>
+        <main class="max-w-4xl mx-auto p-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm mb-6">
+                <h3 class="font-bold text-gray-800 mb-2">Pendaftaran Agen Baru</h3>
+                <p class="text-xs text-gray-500 mb-4">Tambahkan mitra untuk memberi mereka akses ke Portal Generator Link.</p>
+                <form onsubmit="saveAgent(event)" class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" name="name" placeholder="Nama Agen" class="border p-2 rounded-lg flex-1 text-sm" required>
+                    <input type="text" name="whatsapp" placeholder="Nomor WA (Mulai 628...)" class="border p-2 rounded-lg flex-1 text-sm" required>
+                    <button type="submit" class="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-primary/90 transition">Daftarkan</button>
+                </form>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-50 text-gray-600">
+                        <tr>
+                            <th class="p-3">Nama Agen</th>
+                            <th class="p-3">Nomor WA</th>
+                            <th class="p-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${agentsData.map(a => `
+                        <tr class="border-t">
+                            <td class="p-3 font-bold text-gray-800">${a.name}</td>
+                            <td class="p-3 text-gray-500">${a.whatsapp}</td>
+                            <td class="p-3 text-right">
+                                <button onclick="deleteAgent(${a.id})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </td>
+                        </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                ${agentsData.length === 0 ? '<p class="text-center text-gray-400 py-6">Belum ada agen terdaftar.</p>' : ''}
             </div>
         </main>
     </div>
