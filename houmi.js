@@ -1372,6 +1372,12 @@ function getAdminNavLinks(isMobile = false) {
     <button onclick="navigateTo('admin-articles'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="book-open" class="w-5 h-5 text-secondary"></i> Artikel
     </button>
+    <button onclick="navigateTo('admin-gallery'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="camera" class="w-5 h-5 text-secondary"></i> Galeri Kenangan
+    </button>
+    <button onclick="navigateTo('admin-testimonials'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+        <i data-lucide="message-square" class="w-5 h-5 text-secondary"></i> Testimoni Tamu
+    </button>
     <button onclick="navigateTo('admin-article-generator'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="pen-tool" class="w-5 h-5 text-secondary"></i> Generator Artikel SEO
     </button>
