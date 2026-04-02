@@ -1460,6 +1460,114 @@ function getHomeHTML() {
                 ${renderVillaCards()}
             </div>
 
+            <!-- Galeri Kenangan Section -->
+            <div class="mt-12">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="camera" class="w-5 h-5 text-primary"></i> Galeri Kenangan</h2>
+                        <p class="text-xs text-gray-500 mt-1">Momen seru tamu menginap di Houmi Villa.</p>
+                    </div>
+                </div>
+                <div class="columns-2 md:columns-4 gap-3 space-y-3">
+                    <div class="relative rounded-2xl overflow-hidden group shadow-sm inline-block w-full">
+                        <img src="https://images.unsplash.com/photo-1543805128-db626df424dd?auto=format&fit=crop&w=500&q=80" class="w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden group shadow-sm inline-block w-full">
+                        <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=500&q=80" class="w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden group shadow-sm inline-block w-full">
+                        <img src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=500&q=80" class="w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden group shadow-sm inline-block w-full">
+                        <img src="https://images.unsplash.com/photo-1522771731474-c352edec9dc6?auto=format&fit=crop&w=500&q=80" class="w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                        <div class="absolute bottom-2 left-2 bg-white/80 backdrop-blur text-[9px] font-bold px-2 py-1 rounded-md text-gray-800">Family Time ❤️</div>
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden group shadow-sm inline-block w-full hidden md:inline-block">
+                        <img src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=500&q=80" class="w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-full text-xs transition-colors flex items-center gap-2 mx-auto shadow-sm">
+                        <i data-lucide="instagram" class="w-4 h-4 text-pink-600"></i> Lihat Instagram Kami
+                    </button>
+                </div>
+            </div>
+
+            <!-- Testimoni Section -->
+            <div class="mt-12 bg-gray-50 -mx-4 px-4 py-10 relative">
+                <!-- Background decoration -->
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+                </div>
+                
+                <div class="relative z-10 max-w-5xl mx-auto">
+                    <div class="text-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-1">Apa Kata Mereka?</h2>
+                        <p class="text-sm text-gray-500">Cerita tamu yang sudah menikmati liburan di Houmi.</p>
+                    </div>
+
+                    <div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 pb-4">
+                        <!-- Testi 1 -->
+                        <div class="min-w-[280px] w-[280px] sm:min-w-[320px] bg-white rounded-2xl p-5 shadow-sm border border-gray-100 snap-center shrink-0">
+                            <div class="flex items-center gap-1 mb-3 text-accent">
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4 h-[65px] line-clamp-3 leading-relaxed">"Villanya bersih banget! Mimin Houmi super ramah & responsif. Cocok bawa keluarga besar, kolam renangnya luas, airnya jernih."</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center font-bold text-primary shrink-0">B</div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800">Budi Santoso</h4>
+                                    <p class="text-[10px] text-gray-400">Surabaya • Nginep di Tropis Villa</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Testi 2 -->
+                        <div class="min-w-[280px] w-[280px] sm:min-w-[320px] bg-white rounded-2xl p-5 shadow-sm border border-gray-100 snap-center shrink-0">
+                            <div class="flex items-center gap-1 mb-3 text-accent">
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4 h-[65px] line-clamp-3 leading-relaxed">"Cabin Nature bener-bener tempat pelarian dari penatnya kerja. Udaranya sejuk parah, malam bisa nyalain api unggun. Fix bakal balik lagi!"</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center font-bold text-accent shrink-0">C</div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800">Citra Kirana</h4>
+                                    <p class="text-[10px] text-gray-400">Jakarta • Nginep di Cabin Nature</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testi 3 -->
+                        <div class="min-w-[280px] w-[280px] sm:min-w-[320px] bg-white rounded-2xl p-5 shadow-sm border border-gray-100 snap-center shrink-0">
+                            <div class="flex items-center gap-1 mb-3 text-accent">
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4 h-[65px] line-clamp-3 leading-relaxed">"Lebih luas aslinya daripada di foto. Pas bawa rombongan kantor 15 orang, semua nyaman banget. Rooftopnya the best buat ngopi pagi."</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 shrink-0">D</div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800">Dimas Pratama</h4>
+                                    <p class="text-[10px] text-gray-400">Malang • Nginep di Grand Family</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Article Section -->
             <div class="mt-10 mb-20">
                 <div class="flex justify-between items-end mb-4">
