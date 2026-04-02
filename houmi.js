@@ -1474,8 +1474,8 @@ function getHomeHTML() {
                             </div>
                             <div class="p-3 flex-1 flex flex-col">
                                 <div class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${article.date}</div>
-                                <h3 class="font-bold text-gray-800 text-sm leading-snug line-clamp-2 mb-2">${article.title}</h3>
-                                <p class="text-xs text-gray-500 line-clamp-2 mt-auto">${article.content}</p>
+                                <h3 class="font-bold text-gray-800 text-sm leading-snug line-clamp-2 mb-2 h-[40px]">${article.title}</h3>
+                                <p class="text-xs text-gray-500 line-clamp-3 mt-auto break-words">${(article.content || '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}</p>
                             </div>
                         </div>
                     `).join('')}
