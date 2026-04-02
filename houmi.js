@@ -2637,6 +2637,16 @@ function renderApp() {
         appDiv.innerHTML = getMediaLibraryHTML();
     } else if (currentPage === 'admin-edit') {
         appDiv.innerHTML = getEditorHTML();
+    } else if (currentPage === 'admin-gallery') {
+        appDiv.innerHTML = getAdminGalleryHTML();
+    } else if (currentPage === 'admin-testimonials') {
+        appDiv.innerHTML = getAdminTestimonialsHTML();
+    } else if (currentPage === 'admin-agents') {
+        appDiv.innerHTML = getAdminAgentsHTML();
+    } else if (currentPage === 'agent-portal') {
+        appDiv.innerHTML = getAgentPortalHTML();
+    } else if (currentPage === 'agent-dashboard') {
+        appDiv.innerHTML = getAgentDashboardHTML();
     } else if (currentPage === 'article-detail' && selectedArticle) {
         appDiv.innerHTML = getArticleDetailHTML(selectedArticle);
     } else if (currentPage === 'detail' && selectedVilla) {
