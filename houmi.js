@@ -2548,33 +2548,33 @@ function getAgentDashboardHTML() {
             <div class="space-y-3 mb-8">
                 ${appData.map(v => {
                     const sellUrl = baseUrl + '?page=detail&id=' + v.id + '&ref=' + currentAgent.whatsapp;
-                    return \`
+                    return `
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex gap-4 items-center">
-                        <img src="\${v.images[0]}" class="w-16 h-16 rounded-lg object-cover bg-gray-200 shrink-0">
+                        <img src="${v.images[0]}" class="w-16 h-16 rounded-lg object-cover bg-gray-200 shrink-0">
                         <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-gray-800 text-sm truncate">\${v.name}</h4>
-                            <button onclick="copyAgentLink('\${sellUrl}')" class="mt-2 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 flex items-center gap-1 transition w-fit">
+                            <h4 class="font-bold text-gray-800 text-sm truncate">${v.name}</h4>
+                            <button onclick="copyAgentLink('${sellUrl}')" class="mt-2 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 flex items-center gap-1 transition w-fit">
                                 <i data-lucide="copy" class="w-3 h-3"></i> Copy Link Promosi
                             </button>
                         </div>
                     </div>
-                \`;}).join('')}
+                `;}).join('')}
             </div>
 
             <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2"><i data-lucide="book-open" class="w-5 h-5 text-primary"></i> Link Pancingan Artikel</h3>
             <div class="space-y-3">
                 ${articlesData.map(a => {
                     const sellUrl = baseUrl + '?page=article&id=' + a.id + '&ref=' + currentAgent.whatsapp;
-                    return \`
+                    return `
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                        <h4 class="font-bold text-gray-800 text-sm line-clamp-2">\${a.title}</h4>
+                        <h4 class="font-bold text-gray-800 text-sm line-clamp-2">${a.title}</h4>
                         <div class="mt-2 text-right">
-                            <button onclick="copyAgentLink('\${sellUrl}')" class="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-100 inline-flex items-center gap-1">
+                            <button onclick="copyAgentLink('${sellUrl}')" class="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-100 inline-flex items-center gap-1">
                                 <i data-lucide="copy" class="w-3 h-3"></i> Copy Link Pancingan
                             </button>
                         </div>
                     </div>
-                \`;}).join('')}
+                `;}).join('')}
             </div>
             
             <div class="mt-8 bg-gradient-to-r from-primary to-accent text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
