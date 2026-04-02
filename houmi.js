@@ -1537,7 +1537,8 @@ function getHomeHTML() {
                     </div>
 
                     <div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 pb-4">
-                        <!-- Testi 1 -->
+                        ${testimonialsData.length === 0 ? '<p class="text-sm text-gray-400 text-center w-full py-4">Belum ada testimoni.</p>' : testimonialsData.map(t => `
+                        <!-- Testi Item -->
                         <div class="min-w-[280px] w-[280px] sm:min-w-[320px] bg-white rounded-2xl p-5 shadow-sm border border-gray-100 snap-center shrink-0">
                             <div class="flex items-center gap-1 mb-3 text-accent">
                                 <i data-lucide="star" class="w-4 h-4 fill-current"></i>
@@ -1546,53 +1547,15 @@ function getHomeHTML() {
                                 <i data-lucide="star" class="w-4 h-4 fill-current"></i>
                                 <i data-lucide="star" class="w-4 h-4 fill-current"></i>
                             </div>
-                            <p class="text-sm text-gray-600 mb-4 h-[65px] line-clamp-3 leading-relaxed">"Villanya bersih banget! Mimin Houmi super ramah & responsif. Cocok bawa keluarga besar, kolam renangnya luas, airnya jernih."</p>
+                            <p class="text-sm text-gray-600 mb-4 h-[65px] line-clamp-3 leading-relaxed">"${t.text}"</p>
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center font-bold text-primary shrink-0">B</div>
+                                <div class="w-10 h-10 ${t.bgClass} rounded-full flex items-center justify-center font-bold ${t.textClass} shrink-0">${t.initial}</div>
                                 <div>
-                                    <h4 class="font-bold text-sm text-gray-800">Budi Santoso</h4>
-                                    <p class="text-[10px] text-gray-400">Surabaya • Nginep di Tropis Villa</p>
+                                    <h4 class="font-bold text-sm text-gray-800">${t.name}</h4>
+                                    <p class="text-[10px] text-gray-400">${t.location} • Nginep di ${t.villa}</p>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Testi 2 -->
-                        <div class="min-w-[280px] w-[280px] sm:min-w-[320px] bg-white rounded-2xl p-5 shadow-sm border border-gray-100 snap-center shrink-0">
-                            <div class="flex items-center gap-1 mb-3 text-accent">
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                            <p class="text-sm text-gray-600 mb-4 h-[65px] line-clamp-3 leading-relaxed">"Cabin Nature bener-bener tempat pelarian dari penatnya kerja. Udaranya sejuk parah, malam bisa nyalain api unggun. Fix bakal balik lagi!"</p>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center font-bold text-accent shrink-0">C</div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-gray-800">Citra Kirana</h4>
-                                    <p class="text-[10px] text-gray-400">Jakarta • Nginep di Cabin Nature</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Testi 3 -->
-                        <div class="min-w-[280px] w-[280px] sm:min-w-[320px] bg-white rounded-2xl p-5 shadow-sm border border-gray-100 snap-center shrink-0">
-                            <div class="flex items-center gap-1 mb-3 text-accent">
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                            <p class="text-sm text-gray-600 mb-4 h-[65px] line-clamp-3 leading-relaxed">"Lebih luas aslinya daripada di foto. Pas bawa rombongan kantor 15 orang, semua nyaman banget. Rooftopnya the best buat ngopi pagi."</p>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 shrink-0">D</div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-gray-800">Dimas Pratama</h4>
-                                    <p class="text-[10px] text-gray-400">Malang • Nginep di Grand Family</p>
-                                </div>
-                            </div>
-                        </div>
+                        </div>`).join('')}
                     </div>
                 </div>
             </div>
@@ -2678,6 +2641,39 @@ function getAdminGalleryHTML() {
     `;
 }
 
+function deleteTestimonial(id) {
+    if(confirm('Hapus testimoni ini?')) {
+        testimonialsData = testimonialsData.filter(t => t.id !== id);
+        saveTestimonialsToStorage();
+    }
+}
+
+function saveTestimonial(e) {
+    e.preventDefault();
+    const form = e.target;
+    const colors = [
+        { bg: 'bg-primary/20', text: 'text-primary' },
+        { bg: 'bg-accent/20', text: 'text-accent' },
+        { bg: 'bg-blue-100', text: 'text-blue-600' },
+        { bg: 'bg-green-100', text: 'text-green-600' },
+        { bg: 'bg-purple-100', text: 'text-purple-600' }
+    ];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    testimonialsData.unshift({
+        id: Date.now(),
+        name: form.name.value,
+        location: form.location.value,
+        villa: form.villa.value,
+        text: form.text.value,
+        initial: form.name.value.charAt(0).toUpperCase(),
+        bgClass: color.bg,
+        textClass: color.text
+    });
+    saveTestimonialsToStorage();
+    form.reset();
+}
+
 function getAdminTestimonialsHTML() {
     return `
     <div class="min-h-screen bg-gray-100 pb-20 font-body">
@@ -2686,13 +2682,34 @@ function getAdminTestimonialsHTML() {
             <h1 class="text-xl font-bold text-gray-800">Kelola Testimoni</h1>
         </header>
         <main class="max-w-4xl mx-auto p-4">
-            <div class="bg-white p-6 rounded-xl shadow-sm text-center">
-                <i data-lucide="message-square" class="w-12 h-12 text-primary mx-auto mb-4 opacity-50"></i>
-                <h3 class="font-bold text-gray-800 mb-2">Manajemen Testimoni Dinamis</h3>
-                <p class="text-sm text-gray-500 mb-4">Fitur penambahan testimoni dinamis sedang dalam pengembangan. Untuk saat ini testimoni depan adalah statis.</p>
-                <button onclick="navigateTo('admin-dashboard')" class="bg-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-primary/90 transition shadow-md">
-                    Kembali ke Dashboard
-                </button>
+            <div class="bg-white p-6 rounded-xl shadow-sm mb-6">
+                <h3 class="font-bold text-gray-800 mb-2">Tambah Testimoni Baru</h3>
+                <form onsubmit="saveTestimonial(event)" class="space-y-3">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" name="name" placeholder="Nama Tamu" class="border p-2 rounded-lg flex-1 text-sm" required>
+                        <input type="text" name="location" placeholder="Asal Kota" class="border p-2 rounded-lg flex-1 text-sm" required>
+                        <input type="text" name="villa" placeholder="Nginep di Villa Apa?" class="border p-2 rounded-lg flex-1 text-sm" required>
+                    </div>
+                    <textarea name="text" placeholder="Isi testimoni / review..." class="border p-2 rounded-lg w-full text-sm" rows="3" required></textarea>
+                    <button type="submit" class="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-primary/90 transition w-full sm:w-auto">Simpan Testimoni</button>
+                </form>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden p-4">
+                <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Daftar Testimoni</h3>
+                <div class="space-y-4">
+                    ${testimonialsData.length === 0 ? '<p class="text-center text-gray-400 py-6">Belum ada testimoni.</p>' : ''}
+                    ${testimonialsData.map(t => `
+                    <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <div class="w-12 h-12 ${t.bgClass} rounded-full flex items-center justify-center font-bold ${t.textClass} shrink-0">${t.initial}</div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm text-gray-800">${t.name} <span class="text-xs font-normal text-gray-400">(${t.location} • ${t.villa})</span></h4>
+                            <p class="text-xs text-gray-600 mt-1 italic">"${t.text}"</p>
+                        </div>
+                        <button onclick="deleteTestimonial(${t.id})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg mt-2 sm:mt-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                    `).join('')}
+                </div>
             </div>
         </main>
     </div>
