@@ -83,6 +83,29 @@ const DEFAULT_ARTICLES = [
     }
 ];
 
+const DEFAULT_TESTIMONIALS = [
+    {
+        id: 1,
+        name: "Keluarga Bapak Budi",
+        location: "Surabaya",
+        villa: "Houmi Tropis Pool Villa",
+        text: "Villa nya sangat nyaman dan bersih. Anak-anak puas berenang. Next time pasti nginep sini lagi kalau ke Batu!",
+        initial: "K",
+        bgClass: "bg-primary/20",
+        textClass: "text-primary"
+    },
+    {
+        id: 2,
+        name: "Siska & Teman-teman",
+        location: "Jakarta",
+        villa: "Houmi Cabin & Nature",
+        text: "Suasananya dapet banget! Cocok buat healing menjauh dari hiruk pikuk kota. BBQ malam hari seru banget.",
+        initial: "S",
+        bgClass: "bg-accent/20",
+        textClass: "text-accent"
+    }
+];
+
 // Fungsi Aman untuk membaca LocalStorage (Anti-Crash/Blank)
 function safeParse(key, defaultValue) {
     try {
@@ -98,6 +121,7 @@ let appData = safeParse('HOUMI_DATA', DEFAULT_DATA);
 let mediaData = safeParse('HOUMI_MEDIA', DEFAULT_MEDIA);
 let articlesData = safeParse('HOUMI_ARTICLES', DEFAULT_ARTICLES);
 let bookingsData = safeParse('HOUMI_BOOKINGS', []);
+let testimonialsData = safeParse('HOUMI_TESTIMONIALS', DEFAULT_TESTIMONIALS);
 
 let agentsData = safeParse('HOUMI_AGENTS', []);
 function saveAgentsToStorage() {
@@ -147,6 +171,11 @@ function saveArticlesToStorage() {
 
 function saveBookingsToStorage() {
     localStorage.setItem('HOUMI_BOOKINGS', JSON.stringify(bookingsData));
+    renderApp();
+}
+
+function saveTestimonialsToStorage() {
+    localStorage.setItem('HOUMI_TESTIMONIALS', JSON.stringify(testimonialsData));
     renderApp();
 }
 
@@ -1399,6 +1428,7 @@ function getAdminNavLinks(isMobile = false) {
         <i data-lucide="message-square" class="w-5 h-5 text-secondary"></i> Testimoni Tamu
     </button>
     <button onclick="navigateTo('admin-agents'); \\${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
+    <button onclick="navigateTo('admin-agents'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
         <i data-lucide="users" class="w-5 h-5 text-secondary"></i> Kelola Mitra Agen
     </button>
     <button onclick="navigateTo('admin-article-generator'); ${clickAction}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition text-secondary font-medium">
